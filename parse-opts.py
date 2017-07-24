@@ -25,9 +25,28 @@ UDPOLEN_FRAG = 12
 UDPOLEN_ECHOREQ = 0
 UDPOLEN_ECHORES = 0
 
+def calculateocs(pkt):     
+    res = 0                 
+    for b in pkt:           
+        res = res + b       
+                            
+    while res > 0x00FF:     
+        high = 0xFF00 & res 
+        low =  0x00FF & res 
+                            
+        high = high >> 8    
+                            
+        res = low + high    
+    return res ^ 0xFF       
+
 # parse udp options tlv into a dictionary
 def udp_dooptions(buf):
-	print("Processing {} bytes of UDP Options".format(len(buf))	)
+	print("Processing {} bytes of UDP Options".format(len(buf)))
+
+	ocs = calculateocs(buf)
+	if ocs != 0:
+		print("OCS failed {} but should be 0".format(hex(ocs)))
+
 	opts = {}
 	cnt = len(buf)
 	optlen = 0
@@ -92,17 +111,14 @@ def udp_addoptions(opts):
 	optbuf[optlen] = UDPOPT_EOL
 	optlen = optlen + 1
 
-	#optbuf[1] = osc(optbuf, optlen)
+	optbuf[1] = calculateocs(optbuf[:optlen])
 
 	return optbuf[:optlen]
 
 if __name__ == "__main__":
 	options = udp_dooptions(
 		bytearray(
-			"\x02\x0F\x06\x0A\x40\x30\x20\x10\x40\x30\x20\x10\x05\04\x0F\x0F\x01\x01\x01\x01\x01\x01\x00",
-			'ascii'
-		)
-	)
+			[0x02,0x7f,0x06,0x0A,0x40,0x30,0x20,0x10,0x40,0x30,0x20,0x10,0x05,0x04,0x0F,0x0F,0x01,0x01,0x01,0x01,0x01,0x01,0x00]))
 
 	optbuf = udp_addoptions(options)
 
