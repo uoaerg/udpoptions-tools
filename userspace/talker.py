@@ -1,7 +1,3 @@
-from scapy.all import IP
-from scapy.all import UDP 
-from scapy.all import *
-
 import udpoptions
 import udp_usrreq
 
