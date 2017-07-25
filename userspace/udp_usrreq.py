@@ -30,11 +30,6 @@ def udp_output(data, pcb, options=None):
     send(optpkt)
 
 def udp_input(pkt):
-    """
-        input things to do
-        - look up a pcb
-        - trigger the pcb callback
-        """
     ip = pkt[IP]
     udp = pkt[UDP]
     options = None
@@ -65,6 +60,7 @@ def icmp_input(pkt):
             proc = listening[pcb_hdr]
             proc['callback'](proc, data, options, 
                 {'type':icmp.type, 'code':icmp.code})
+        print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
     else:
         print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
 
