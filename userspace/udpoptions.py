@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import struct
+import socket
 
 UDPOPT_EOL = 0
 UDPOPT_NOP = 1
@@ -97,12 +98,23 @@ def udp_addoptions(opts):
 	if 'UDPOPT_TIME' in opts:
 		optbuf[optlen] = UDPOPT_TIME
 		optbuf[optlen+1] = UDPOLEN_TIME
+
+                tsval, tsecr = opts['UDPOPT_TIME']
+
+                print("tsval {} tsecr {}".format(tsval, tsecr))
+
+                struct.pack_into("!I", optbuf, optlen+2, tsval)
+                struct.pack_into("!I", optbuf, optlen+6, tsecr)
 		optlen = optlen + UDPOLEN_TIME
 
 	if 'UDPOPT_MSS' in opts:
 		optbuf[optlen] = UDPOPT_MSS
 		optbuf[optlen+1] = UDPOLEN_MSS
 		optlen = optlen + UDPOLEN_MSS
+
+                mss = opts['UDPOPT_MSS']
+                struct.pack_into("!I", optbuf, optlen+2, mss)
+                optlen = optlen + UDPOLEN_MSS
 
 	#add a nop
 	optbuf[optlen] = UDPOPT_NOP
@@ -111,9 +123,12 @@ def udp_addoptions(opts):
 	optbuf[optlen] = UDPOPT_EOL
 	optlen = optlen + 1
 
-	optbuf[1] = calculateocs(optbuf[:optlen])
+        optbuf = optbuf[:optlen]
+	optbuf[1] = calculateocs(optbuf)
 
-	return optbuf[:optlen]
+        print(" ".join("{:02x}".format(c) for c in optbuf))
+
+	return optbuf
 
 if __name__ == "__main__":
 	options = udp_dooptions(
@@ -124,4 +139,3 @@ if __name__ == "__main__":
 
 	print(options)
 	print(optbuf)
-
