@@ -126,6 +126,7 @@ def udp_addoptions(opts):
         optbuf = optbuf[:optlen]
 	optbuf[1] = calculateocs(optbuf)
 
+        print("{} bytes of options".format(len(optbuf)))
         print(" ".join("{:02x}".format(c) for c in optbuf))
 
 	return optbuf
