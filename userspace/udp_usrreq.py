@@ -2,7 +2,7 @@ from scapy.all import IP
 from scapy.all import UDP 
 from scapy.all import *
 
-import udpoptions
+import udp_options
 
 listening = {}
 
@@ -20,7 +20,7 @@ def udp_output(data, pcb, options=None):
     optpkt.getlayer(1).len = len(optpkt.getlayer(1)) #force UDP len
 
     if options:
-        optbuf = udpoptions.udp_addoptions(options)
+        optbuf = udp_options.udp_addoptions(options)
         optpkt = (optpkt/str(optbuf))
 
     optpkt.getlayer(1).chksum = chksum
@@ -38,7 +38,7 @@ def udp_input(pkt):
         print(pkt.show())
         pay = pkt[Raw].load
         opt = pkt[Padding].load
-        options = udpoptions.udp_dooptions(bytearray(opt)) 
+        options = udp_options.udp_dooptions(bytearray(opt)) 
 
         print("udp len {}, options len {}".format(len(pay), len(opt)))
         print(options)
