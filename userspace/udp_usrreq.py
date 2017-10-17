@@ -7,7 +7,7 @@ import udp_options
 listening = {}
 
 def udp_output(data, pcb, options=None):
-
+    print("udp output")
     ip = IP(src=pcb['src'], dst=pcb['dst'])
     udp = UDP(sport=pcb['sport'], dport=pcb['dport'])
 
@@ -15,7 +15,7 @@ def udp_output(data, pcb, options=None):
 
     chksum = optpkt[UDP].chksum #capture correct checksum
     udplen = optpkt[UDP].len    #capture correct length
-    udplen = len(data) + 8
+    #udplen = len(data) + 8
 
     optpkt.getlayer(1).len = len(optpkt.getlayer(1)) #force UDP len
 
@@ -34,6 +34,7 @@ def udp_input(pkt):
     udp = pkt[UDP]
     options = None
 
+    print("ip len {}, udp len {}".format(ip.len, udp.len))
     if ip.len != udp.len+20:
         print(pkt.show())
         pay = pkt[Raw].load
@@ -43,8 +44,22 @@ def udp_input(pkt):
         print("udp len {}, options len {}".format(len(pay), len(opt)))
         print(options)
 
-    pcb_hdr = (ip.dst, udp.dport)
+        print("here")
+        if 'UDPOPT_ECHORES' in options:
+            print("and here")
+            reqtoken = options['UDPOPT_ECHORES']
 
+            resopt = {
+                'UDPOPT_TIME': (0x11223344, 0x55667788),
+                'UDPOPT_ECHORES':reqtoken
+            }
+            udp_output("",
+                {'src':ip.dst,'dst':ip.src,'sport':udp.dport,'dport':udp.sport}, 
+                options=resopt)
+    else:
+        print("no options")
+
+    pcb_hdr = (ip.dst, udp.dport)
     if pcb_hdr in listening:
         proc = listening[pcb_hdr]
         proc['callback'](proc, data, options)
