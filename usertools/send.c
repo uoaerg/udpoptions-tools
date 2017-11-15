@@ -1,5 +1,5 @@
 /*
-** talker.c -- a datagram "client" demo
+** sender.c -- a datagram "client" demo
 */
 
 #include <stdio.h>
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	int numbytes;
 
 	if (argc != 3) {
-		fprintf(stderr,"usage: talker hostname message\n");
+		fprintf(stderr,"usage: sender hostname message\n");
 		exit(1);
 	}
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	for(p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype,
 				p->ai_protocol)) == -1) {
-			perror("talker: socket");
+			perror("sender: socket");
 			continue;
 		}
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (p == NULL) {
-		fprintf(stderr, "talker: failed to create socket\n");
+		fprintf(stderr, "sender: failed to create socket\n");
 		return 2;
 	}
 
@@ -66,12 +66,6 @@ int main(int argc, char *argv[])
 
 	ret = bind(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 #if 1
-	int disable = 1;
-	if (setsockopt(sockfd, SOL_SOCKET, UDP_NO_CHECK, (void*)&disable, sizeof(disable)) < 0) {
-		perror("disable checksum");
-	}
-
-
 	int optval = 1;
 	int res = 0;
 
@@ -84,13 +78,13 @@ int main(int argc, char *argv[])
 
 	if ((numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,
 			 p->ai_addr, p->ai_addrlen)) == -1) {
-		perror("talker: sendto");
+		perror("sender: sendto");
 		exit(1);
 	}
 
 	freeaddrinfo(servinfo);
 
-	printf("talker: sent %d bytes to %s\n", numbytes, argv[1]);
+	printf("sender: sent %d bytes to %s\n", numbytes, argv[1]);
 	close(sockfd);
 
 	return 0;
