@@ -78,15 +78,15 @@ int main(int argc, char *argv[])
 
 	ret = bind(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
-	for (int i = 0;i < 10;i++) {
-
-		int optval = 1;
-		int res = 0;
+	int optval = 1;
+	int res = 0;
 
 #define UDP_OPT 8 
-		if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
-			perror("set UDP_OPT");
-		}
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
+		perror("set UDP_OPT");
+	}
+
+	for (int i = 0;i < 10;i++) {
 
 		if ((numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,
 				 p->ai_addr, p->ai_addrlen)) == -1) {

@@ -66,6 +66,13 @@ int main(void)
 		return 2;
 	}
 
+	int optval = 1;
+	int res = 0;
+																		 
+#define UDP_OPT 8
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
+	perror("set UDP_OPT");
+	}
 
 	printf("echoserver: listening on %s:%s\n", 
 			inet_ntop(their_addr.ss_family, get_in_addr(p->ai_addr),
