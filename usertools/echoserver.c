@@ -93,6 +93,12 @@ int main(void)
 			exit(1);       
 		}                  
 
+		printf("echoserver: echo'd   %d bytes to   %s\n", numbytes,
+			inet_ntop(their_addr.ss_family,
+			get_in_addr((struct sockaddr *)&their_addr),
+			s, sizeof s));
+		buf[numbytes] = '\0';
+
 
 	}	
 	close(sockfd);
