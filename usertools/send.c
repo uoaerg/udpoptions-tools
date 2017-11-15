@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
@@ -12,10 +13,9 @@
 
 #define MAXBUFLEN 65535
 
-//#define SPORT 2600
-#define DPORT "2500"
+uint16_t sendsize = 1500;
+const char *dstport = "2500";
 
-// get sockaddr, IPv4 or IPv6:                        
 void *get_in_addr(struct sockaddr *sa)                
 {                                                     
     if (sa->sa_family == AF_INET) {                   
@@ -30,11 +30,14 @@ int main(int argc, char *argv[])
 	int sockfd;
 	struct addrinfo hints, *servinfo, *p;
 	struct sockaddr_storage their_addr;
-	char buf[MAXBUFLEN];               
+	struct sockaddr_in sa;
 	socklen_t addr_len;
-	int rv;
-	int numbytes;
+	int numbytes, rv, fd;
+	int optval = 1;
+	int res = 0;
+	char buf[MAXBUFLEN];               
 	char s[INET6_ADDRSTRLEN];
+	struct timeval tv;
 
 	if (argc != 3) {
 		fprintf(stderr,"usage: send hostname message\n");
@@ -45,7 +48,7 @@ int main(int argc, char *argv[])
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_DGRAM;
 
-	if ((rv = getaddrinfo(argv[1], DPORT, &hints, &servinfo)) != 0) {
+	if ((rv = getaddrinfo(argv[1], dstport, &hints, &servinfo)) != 0) {
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
 	}
@@ -68,28 +71,30 @@ int main(int argc, char *argv[])
 
 
 
-	struct sockaddr_in sa;
-	int ret, fd;
 
 	memset(&sa, 0, sizeof(struct sockaddr_in));
 	sa.sin_family = AF_INET;
 	//sa.sin_port = htons(SPORT);
 	sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	ret = bind(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
-
-	int optval = 1;
-	int res = 0;
+	rv = bind(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
 #define UDP_OPT 8 
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
 		perror("set UDP_OPT");
 	}
 
+	tv.tv_sec = 10;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO ,&tv, sizeof(tv)) < 0) {
+		perror("send: setting time out");
+	}
+
+	memset(buf, '4', sendsize);
+
 	for (int i = 0;i < 10;i++) {
 
-		if ((numbytes = sendto(sockfd, argv[2], strlen(argv[2]), 0,
-				 p->ai_addr, p->ai_addrlen)) == -1) {
+		if ((numbytes = sendto(sockfd, buf, sendsize, 0, p->ai_addr, 
+			p->ai_addrlen)) == -1) {
 			perror("send: sendto");
 			exit(1);
 		}
@@ -98,7 +103,7 @@ int main(int argc, char *argv[])
 		addr_len = sizeof their_addr;             
 		if ((numbytes = recvfrom(sockfd, buf, MAXBUFLEN-1 , 0,     
 			(struct sockaddr *)&their_addr, &addr_len)) == -1) {   
-			perror("recvfrom");                   
+			perror("send: ");                   
 			exit(1);   
 		}              
 					   
@@ -106,8 +111,7 @@ int main(int argc, char *argv[])
 			inet_ntop(their_addr.ss_family,                        
 			get_in_addr((struct sockaddr *)&their_addr),           
 			s, sizeof s));                                         
-		buf[numbytes] = '\0';                                      
-
+		sleep(1);
 	}
 	freeaddrinfo(servinfo);
 
