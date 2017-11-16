@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#define PORT "2500"	// the port users will be connecting to
+#define PORT "7"	//udp echo
 
 #define MAXBUFLEN 65535
 

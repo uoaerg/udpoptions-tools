@@ -15,7 +15,7 @@
 
 uint16_t interval = 2;
 uint16_t sendsize = 1280;
-const char *dstport = "2500";
+const char *dstport = "7";			//udp echo
 
 void *get_in_addr(struct sockaddr *sa)                
 {                                                     

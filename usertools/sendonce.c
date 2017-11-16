@@ -11,7 +11,7 @@
 #include <netdb.h>
 
 #define SPORT 2600
-#define DPORT "2500"
+#define DPORT "7"
 
 int main(int argc, char *argv[])
 {
