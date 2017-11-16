@@ -11,9 +11,10 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#define MAXBUFLEN 65535
+#define MAXBUFLEN 	65535
 
-uint16_t sendsize = 1500;
+uint16_t interval = 2;
+uint16_t sendsize = 1280;
 const char *dstport = "2500";
 
 void *get_in_addr(struct sockaddr *sa)                
@@ -76,8 +77,7 @@ int main(int argc, char *argv[])
 	rv = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
 #define UDP_OPT             8   /* use udp options */
-#define UDP_OPT_MSS         9   /* get opt rtt estimate */
-#define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
+#define UDP_OPT_MSS         9   /* get opt rtt estimate */ #define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
 		perror("set UDP_OPT");
 	}
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 			inet_ntop(their_addr.ss_family,                        
 			get_in_addr((struct sockaddr *)&their_addr),           
 			s, sizeof s));                                         
-		sleep(1);
+		sleep(interval);
 	}
 	freeaddrinfo(servinfo);
 
