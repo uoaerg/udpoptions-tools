@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	sa.sin_port = htons(SPORT);
 	sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	ret = bind(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+	ret = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 #if 1
 	int optval = 1;
 	int res = 0;
