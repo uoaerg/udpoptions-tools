@@ -15,10 +15,10 @@
 
 int main(int argc, char *argv[])
 {
-	int sockfd;
+	int sockfd, rv;
 	struct addrinfo hints, *servinfo, *p;
-	int rv;
 	int numbytes;
+	struct sockaddr_in sa;
 
 	if (argc != 3) {
 		fprintf(stderr,"usage: sendonce hostname message\n");
@@ -52,15 +52,13 @@ int main(int argc, char *argv[])
 
 
 
-	struct sockaddr_in sa;
-	int ret, fd;
 
 	memset(&sa, 0, sizeof(struct sockaddr_in));
 	sa.sin_family = AF_INET;
 	sa.sin_port = htons(SPORT);
 	sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	ret = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+	rv = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 #if 1
 	int optval = 1;
 	int res = 0;

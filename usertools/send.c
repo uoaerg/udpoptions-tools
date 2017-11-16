@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	struct sockaddr_storage their_addr;
 	struct sockaddr_in sa;
 	socklen_t addr_len;
-	int numbytes, rv, fd;
+	int numbytes, rv;
 	int optval = 1;
 	char buf[MAXBUFLEN];               
 	char s[INET6_ADDRSTRLEN];
