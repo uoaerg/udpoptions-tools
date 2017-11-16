@@ -73,7 +73,15 @@ int main(void)
 #define UDP_OPT_MSS         9   /* get opt rtt estimate */
 #define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
-	perror("set UDP_OPT");
+		perror("enable UDP_OPT");
+	}
+
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_MSS, &optval, sizeof(int)) != 0)) {
+		perror("enable UDP_OPT_MSS");
+	}
+
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
+		perror("enable UDP_OPT_ECHO");
 	}
 
 	printf("echoserver: listening on %s:%s\n", 
