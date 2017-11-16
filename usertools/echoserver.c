@@ -71,11 +71,12 @@ int main(void)
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
 		perror("enable UDP_OPT");
 	}
-
+#if 0	
+NOT IMPLEMENTED
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_MSS, &optval, sizeof(int)) != 0)) {
 		perror("enable UDP_OPT_MSS");
 	}
-
+#endif
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
 		perror("enable UDP_OPT_ECHO");
 	}
