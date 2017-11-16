@@ -23,8 +23,8 @@ UDPOLEN_LITE = 4
 UDPOLEN_MSS = 4
 UDPOLEN_TIME = 10
 UDPOLEN_FRAG = 12
-UDPOLEN_ECHOREQ = 4
-UDPOLEN_ECHORES = 4
+UDPOLEN_ECHOREQ = 6
+UDPOLEN_ECHORES = 6
 
 def calculateocs(pkt):     
     res = 0                 
