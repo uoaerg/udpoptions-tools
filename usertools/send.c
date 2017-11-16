@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 	socklen_t addr_len;
 	int numbytes, rv, fd;
 	int optval = 1;
-	int res = 0;
 	char buf[MAXBUFLEN];               
 	char s[INET6_ADDRSTRLEN];
 	struct timeval tv;
@@ -68,9 +67,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "send: failed to create socket\n");
 		return 2;
 	}
-
-
-
 
 	memset(&sa, 0, sizeof(struct sockaddr_in));
 	sa.sin_family = AF_INET;

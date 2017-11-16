@@ -25,14 +25,13 @@ void *get_in_addr(struct sockaddr *sa)
 
 int main(void)
 {
-	int sockfd;
+	int sockfd, rv, numbytes;
+	int optval = 1;
 	struct addrinfo hints, *servinfo, *p;
-	int rv;
-	int numbytes;
 	struct sockaddr_storage their_addr;
 	char buf[MAXBUFLEN];
-	socklen_t addr_len;
 	char s[INET6_ADDRSTRLEN];
+	socklen_t addr_len;
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC; // set to AF_INET to force IPv4
@@ -65,9 +64,6 @@ int main(void)
 		fprintf(stderr, "echoserver: failed to bind socket\n");
 		return 2;
 	}
-
-	int optval = 1;
-	int res = 0;
 																		 
 #define UDP_OPT             8   /* use udp options */
 #define UDP_OPT_MSS         9   /* get opt rtt estimate */
