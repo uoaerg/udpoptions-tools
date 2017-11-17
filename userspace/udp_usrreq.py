@@ -6,6 +6,46 @@ import udp_options
 
 listening = {}
 
+def internetchecksum(pkt):
+    if len(pkt) % 2 != 0:
+        a = bytearray(pkt)
+        a.append(0)
+        pkt = bytes(a) # python is such a cluster fuck
+
+    databytes = struct.unpack("!{}H".format(int(len(pkt)/2)), pkt)
+    total = 0
+    for b in databytes:
+        total = total + b
+
+    while total > 0xFFFF:
+        high = 0xFFFF0000 & total
+        low = 0x0000FFFF & total
+
+        high = high >> 16
+
+        total = low + high
+    return total ^ 0xFFFF
+
+def udpchksum(src, dst, sprt, dprt, data):
+    print(type(data))
+    sourceaddr = str(bytearray([ int(x) for x in src.split(".")]))
+    destaddr = str(bytearray([ int(x) for x in dst.split(".")]))
+    proto = 17
+    udplen = 8 + len(data)
+    sport = sprt
+    dport = dprt
+    cksum = 0
+
+    print(type(sourceaddr))
+    pkt = struct.pack("!4s4sBBHHHHH{}s".format(len(data)),
+	sourceaddr, destaddr,
+	0, proto, udplen,
+	sport, dport,
+	udplen, cksum,
+	data)
+
+    return internetchecksum(pkt)
+
 def udp_output(data, pcb, options=None):
     print("udp output")
     ip = IP(src=pcb['src'], dst=pcb['dst'])
@@ -25,7 +65,8 @@ def udp_output(data, pcb, options=None):
         optbuf = udp_options.udp_addoptions(options)
         optpkt = (optpkt/str(optbuf))
 
-    optpkt.getlayer(1).chksum = chksum
+    optpkt.getlayer(1).chksum = udpchksum(pcb['src'],pcb['dst'], pcb['sport'],
+	pcb['dport'], data)
     optpkt.getlayer(1).len = udplen
 
     print("output: data {} udplen {} optlen {}".format(len(data), udplen, len(optbuf)))
