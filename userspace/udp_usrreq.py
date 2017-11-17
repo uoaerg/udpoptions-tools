@@ -27,7 +27,6 @@ def internetchecksum(pkt):
     return total ^ 0xFFFF
 
 def udpchksum(src, dst, sprt, dprt, data):
-    print(type(data))
     sourceaddr = str(bytearray([ int(x) for x in src.split(".")]))
     destaddr = str(bytearray([ int(x) for x in dst.split(".")]))
     proto = 17
@@ -36,7 +35,6 @@ def udpchksum(src, dst, sprt, dprt, data):
     dport = dprt
     cksum = 0
 
-    print(type(sourceaddr))
     pkt = struct.pack("!4s4sBBHHHHH{}s".format(len(data)),
 	sourceaddr, destaddr,
 	0, proto, udplen,
@@ -47,7 +45,6 @@ def udpchksum(src, dst, sprt, dprt, data):
     return internetchecksum(pkt)
 
 def udp_output(data, pcb, options=None):
-    print("udp output")
     ip = IP(src=pcb['src'], dst=pcb['dst'])
     udp = UDP(sport=pcb['sport'], dport=pcb['dport'])
 
@@ -58,8 +55,6 @@ def udp_output(data, pcb, options=None):
     chksum = optpkt[UDP].chksum #capture correct checksum
     udplen = optpkt[UDP].len    #capture correct length
     #udplen = len(data) + 8
-
-    print("cksum: {} udplen:{}".format(chksum, udplen))
 
     if options:
         optbuf = udp_options.udp_addoptions(options)
