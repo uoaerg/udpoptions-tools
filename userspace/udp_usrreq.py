@@ -13,11 +13,13 @@ def udp_output(data, pcb, options=None):
 
     optpkt = ip/udp/data
 
+    optpkt.getlayer(1).len = len(optpkt.getlayer(1)) #force UDP len
+
     chksum = optpkt[UDP].chksum #capture correct checksum
     udplen = optpkt[UDP].len    #capture correct length
     #udplen = len(data) + 8
 
-    optpkt.getlayer(1).len = len(optpkt.getlayer(1)) #force UDP len
+    print("cksum: {} udplen:{}".format(chksum, udplen))
 
     if options:
         optbuf = udp_options.udp_addoptions(options)
