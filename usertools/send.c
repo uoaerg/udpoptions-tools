@@ -79,13 +79,18 @@ int main(int argc, char *argv[])
 #define UDP_OPT             8   /* use udp options */
 #define UDP_OPT_MSS         9   /* get opt rtt estimate */ 
 #define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
+#define UDP_OPT_PROBE   	11  /* perform plpmtud probing */ 
 
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
 		perror("set UDP_OPT");
 	}
 
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
-		perror("set UDP_OPT");
+		perror("set UDP_OPT_ECHO");
+	}
+
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_PROBE, &optval, sizeof(int)) != 0)) {
+		perror("set UDP_OPT_PROBE");
 	}
 
 	tv.tv_sec = 10;
