@@ -77,8 +77,14 @@ int main(int argc, char *argv[])
 	rv = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
 #define UDP_OPT             8   /* use udp options */
-#define UDP_OPT_MSS         9   /* get opt rtt estimate */ #define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
+#define UDP_OPT_MSS         9   /* get opt rtt estimate */ 
+#define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
+
 	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
+		perror("set UDP_OPT");
+	}
+
+	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
 		perror("set UDP_OPT");
 	}
 
