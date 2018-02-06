@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 	sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	rv = bind(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+	rv = connect(sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
 #define UDP_OPT             8   /* use udp options */
 #define UDP_OPT_MSS         9   /* get opt rtt estimate */ 
