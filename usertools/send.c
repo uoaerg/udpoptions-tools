@@ -14,7 +14,8 @@
 #define MAXBUFLEN 	65535
 
 uint16_t interval = 2;
-uint16_t sendsize = 1280;
+uint16_t sendsize = 64;
+uint16_t sendcount = 2;
 const char *dstport = "7";			//udp echo
 
 void *get_in_addr(struct sockaddr *sa)                
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
 
 	memset(buf, '4', sendsize);
 
-	for (int i = 0;i < 10;i++) {
+	for (int i = 0;i < sendcount;i++) {
 
 		if ((numbytes = sendto(sockfd, buf, sendsize, 0, p->ai_addr, 
 			p->ai_addrlen)) == -1) {
