@@ -64,22 +64,23 @@ int main(void)
 		fprintf(stderr, "echoserver: failed to bind socket\n");
 		return 2;
 	}
-																		 
+
 #define UDP_OPT             8   /* use udp options */
 #define UDP_OPT_MSS         9   /* get opt rtt estimate */
 #define UDP_OPT_ECHO        10  /* respond to echo requests estimate */
-	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
-		perror("enable UDP_OPT");
-	}
-#if 0	
-NOT IMPLEMENTED
-	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_MSS, &optval, sizeof(int)) != 0)) {
-		perror("enable UDP_OPT_MSS");
-	}
-#endif
-	if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
-		perror("enable UDP_OPT_ECHO");
-	}
+#define UDP_OPT_PROBE       11  /* perform plpmtud probing */
+
+    if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT, &optval, sizeof(int)) != 0)) {
+        perror("set UDP_OPT");
+    }
+
+    if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_ECHO, &optval, sizeof(int)) != 0)) {
+        perror("set UDP_OPT_ECHO");
+    }
+
+    if ((setsockopt(sockfd, IPPROTO_UDP, UDP_OPT_PROBE, &optval, sizeof(int)) != 0)) {
+        perror("set UDP_OPT_PROBE");
+    }
 
 	printf("echoserver: listening on %s:%s\n", 
 			inet_ntop(their_addr.ss_family, get_in_addr(p->ai_addr),
