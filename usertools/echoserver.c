@@ -96,6 +96,9 @@ int main(void)
 			exit(1);
 		}
 
+		if (numbytes == 0)
+			continue;
+
 		printf("echoserver: received %d bytes from %s\n", numbytes,
 			inet_ntop(their_addr.ss_family,
 			get_in_addr((struct sockaddr *)&their_addr),
