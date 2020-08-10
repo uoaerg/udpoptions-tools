@@ -113,9 +113,6 @@ def icmp_input(pkt):
             proc = listening[pcb_hdr]
             proc['cb'](proc, b"", None,
                 {'type':icmp.type, 'code':icmp.code})
-        print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
-    else:
-        print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
 
 def pkt_input(pkt=None):
     if ICMP in pkt:
