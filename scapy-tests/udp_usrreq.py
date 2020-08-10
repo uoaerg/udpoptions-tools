@@ -118,14 +118,12 @@ def icmp_input(pkt):
         print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
 
 def pkt_input(pkt=None):
-    print("pkt input")
     if ICMP in pkt:
         icmp_input(pkt)
     if UDP in pkt:
         udp_input(pkt)
 
 def run_loop():
-    print("starting to listen")
     sniff(prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
 
 def bindaddr(pcb):
