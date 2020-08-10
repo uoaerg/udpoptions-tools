@@ -64,9 +64,7 @@ def udp_output(data, pcb, options=None):
     optpkt.getlayer(1).chksum = udpchksum(pcb['src'],pcb['dst'], pcb['sport'],
 	pcb['dport'], data)
     optpkt.getlayer(1).len = udplen
-
-    print("output: data {} udplen {} optlen {}".format(len(data), udplen, len(optbuf)))
-    send(optpkt)
+    send(optpkt, verbose=False)
 
 def udp_input(pkt):
     doechores = False
@@ -74,7 +72,6 @@ def udp_input(pkt):
     udp = pkt[UDP]
     options = None
 
-    print("ip len {}, udp len {}".format(ip.len, udp.len))
     if ip.len != udp.len+20:
         try:
             pay = pkt[Raw].load
@@ -82,9 +79,6 @@ def udp_input(pkt):
             pay = b""
         opt = pkt[Padding].load
         options = udp_options.udp_dooptions(bytearray(opt)) 
-
-        print("udp len {}, options len {}".format(len(pay), len(opt)))
-        print(options)
 
         if 'UDPOPT_ECHORES' in options:
             reqtoken = options['UDPOPT_ECHORES']
