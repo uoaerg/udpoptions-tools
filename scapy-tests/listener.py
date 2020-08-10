@@ -3,9 +3,9 @@ import udp_usrreq
 
 def callback(pcb, data=None, options=None, error=None):
     print(pcb)
-    if error:
+    if data:
         print("UDP Data:\t", data)
-    if error:
+    if options:
         print("UDP Options:\t", options)
     if error:
         print("ICMP:\t", error)
