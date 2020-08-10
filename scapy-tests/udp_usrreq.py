@@ -122,7 +122,7 @@ def icmp_input(pkt):
         pcb_hdr = (ip.src, udp.sport)
         if pcb_hdr in listening:
             proc = listening[pcb_hdr]
-            proc(proc, b"", options,
+            proc(proc, b"", None,
                 {'type':icmp.type, 'code':icmp.code})
         print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
     else:
