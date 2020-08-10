@@ -76,7 +76,6 @@ def udp_input(pkt):
 
     print("ip len {}, udp len {}".format(ip.len, udp.len))
     if ip.len != udp.len+20:
-        print(pkt.show())
         try:
             pay = pkt[Raw].load
         except IndexError:
@@ -87,9 +86,7 @@ def udp_input(pkt):
         print("udp len {}, options len {}".format(len(pay), len(opt)))
         print(options)
 
-        print("here")
         if 'UDPOPT_ECHORES' in options:
-            print("and here")
             reqtoken = options['UDPOPT_ECHORES']
 
             resopt = {
@@ -97,8 +94,6 @@ def udp_input(pkt):
                 'UDPOPT_ECHORES':reqtoken
             }
             doechores = True
-    else:
-        print("no options")
 
     pcb_hdr = (ip.dst, udp.dport)
     if pcb_hdr in listening:
@@ -107,7 +102,6 @@ def udp_input(pkt):
         # on this address. This has the side effect of not responding           
         # to packets that we generate                                           
         if doechores:                                                           
-            print("udp_output replying to echo req")                            
             udp_output(b"I love Options Space on a packet",
                 {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
                 options=resopt)
