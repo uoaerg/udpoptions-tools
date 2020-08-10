@@ -2,13 +2,23 @@ import udp_options
 import udp_usrreq
 
 def callback(pcb, data=None, options=None, error=None):
-    print(pcb)
+    if error:
+        print("error from:")
+    else:
+        print("packet from:")
+    print("\t", pcb)
+
     if data:
         print("UDP Data:\t", data)
     if options:
         print("UDP Options:\t", options)
     if error:
         print("ICMP:\t", error)
+
+    # be an echo server
+    if data and not error:
+        udp_usrreq.udp_output(data, 
+            {"src": pcb['address'], "dst": pcb['peerinfo'][0], "sport": 2500, "dport": 2600})
 
 if __name__ == "__main__":
     print("startings")
