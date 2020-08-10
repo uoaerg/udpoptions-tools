@@ -42,77 +42,77 @@ def calculateocs(pkt):
 
 # parse udp options tlv into a dictionary
 def udp_dooptions(buf):
-	print("Processing {} bytes of UDP Options".format(len(buf)))
+        print("Processing {} bytes of UDP Options".format(len(buf)))
 
-	ocs = calculateocs(buf)
-	if ocs != 0:
-		print("OCS failed {} but should be 0".format(hex(ocs)))
+        ocs = calculateocs(buf)
+        if ocs != 0:
+                print("OCS failed {} but should be 0".format(hex(ocs)))
 
-	opts = {}
-	cnt = len(buf)
-	optlen = 0
-	cp = 0
+        opts = {}
+        cnt = len(buf)
+        optlen = 0
+        cp = 0
 
-	while (cnt > 0):
-		cnt = cnt - optlen
-		cp = cp + optlen
+        while (cnt > 0):
+                cnt = cnt - optlen
+                cp = cp + optlen
 
                 # 
                 # Parse the required options that define the packet
                 #
-		opt = buf[cp]
-		if opt == UDPOPT_EOL:
-			print("UDPOPT_EOL Stopping")
-			optlen = 1
-			return opts
-		if opt == UDPOPT_NOP:
-			optlen = 1
-			print("UDPOPT_NOP")
-			continue
+                opt = buf[cp]
+                if opt == UDPOPT_EOL:
+                        print("UDPOPT_EOL Stopping")
+                        optlen = 1
+                        return opts
+                if opt == UDPOPT_NOP:
+                        optlen = 1
+                        print("UDPOPT_NOP")
+                        continue
 
-		if opt == UDPOPT_OCS:
-			print("UDPOPT_OCS")
-			opts['UDPOPT_OCS'] = buf[cp+1]
-			optlen = 2
-			continue
+                if opt == UDPOPT_OCS:
+                        print("UDPOPT_OCS")
+                        opts['UDPOPT_OCS'] = buf[cp+1]
+                        optlen = 2
+                        continue
 
-		optlen = buf[cp+1]
+                optlen = buf[cp+1]
 
                 # 
                 # Parse useful options
                 #
                 print("opt {}".format(opt))
-		if opt == UDPOPT_MSS:      
+                if opt == UDPOPT_MSS:      
                     mss = struct.unpack("!h", buf[optlen:optlen+2])[0]
                     opts['UDPOPT_MSS'] = mss
                     print("UDPOPT_MSS {}".format(mss))
 
-		if opt == UDPOPT_TIME:     
+                if opt == UDPOPT_TIME:     
                     tsval, tsecr = struct.unpack("!ii", buf[optlen:optlen+8])
                     opts['UDPOPT_TIME'] = (tsval, tsecr)
                     print("UDPOPT_TIME {} {}".format(tsval, tsecr))
 
-		if opt == UDPOPT_ECHOREQ:
+                if opt == UDPOPT_ECHOREQ:
                     token = struct.unpack("!h", buf[optlen:optlen+2])[0]
                     opts['UDPOPT_ECHOREQ'] = token
                     print("UDPOPT_ECHOREQ {}".format(token))
 
-		if opt == UDPOPT_ECHORES:
+                if opt == UDPOPT_ECHORES:
                     token = struct.unpack("!h", buf[optlen:optlen+2])[0]
                     opts['UDPOPT_ECHORES'] = token
                     print("UDPOPT_ECHORES {}".format(token))
 
 def udp_addoptions(opts):
 
-	optbuf = bytearray(100)
+        optbuf = bytearray(100)
 
-	# place the ocs
-	optbuf[0] = UDPOPT_OCS
-	optbuf[1] = 0
+        # place the ocs
+        optbuf[0] = UDPOPT_OCS
+        optbuf[1] = 0
 
-	optlen = 2
-	
-	if 'UDPOPT_TIME' in opts:
+        optlen = 2
+        
+        if 'UDPOPT_TIME' in opts:
             optbuf[optlen] = UDPOPT_TIME
             optbuf[optlen+1] = UDPOLEN_TIME
 
@@ -124,7 +124,7 @@ def udp_addoptions(opts):
             struct.pack_into("!I", optbuf, optlen+6, tsecr)
             optlen = optlen + UDPOLEN_TIME
 
-	if 'UDPOPT_MSS' in opts:
+        if 'UDPOPT_MSS' in opts:
             optbuf[optlen] = UDPOPT_MSS
             optbuf[optlen+1] = UDPOLEN_MSS
 
@@ -132,7 +132,7 @@ def udp_addoptions(opts):
             struct.pack_into("!I", optbuf, optlen+2, mss)
             optlen = optlen + UDPOLEN_MSS
 
-	if 'UDPOPT_ECHOREQ' in opts:
+        if 'UDPOPT_ECHOREQ' in opts:
             optbuf[optlen] = UDPOPT_ECHOREQ
             optbuf[optlen+1] = UDPOLEN_ECHOREQ
 
@@ -140,7 +140,7 @@ def udp_addoptions(opts):
             struct.pack_into("!I", optbuf, optlen+2, token)
             optlen = optlen + UDPOLEN_ECHOREQ
 
-	if 'UDPOPT_ECHORES' in opts:
+        if 'UDPOPT_ECHORES' in opts:
             optbuf[optlen] = UDPOPT_ECHORES
             optbuf[optlen+1] = UDPOLEN_ECHORES
 
@@ -148,27 +148,27 @@ def udp_addoptions(opts):
             struct.pack_into("!I", optbuf, optlen+2, token)
             optlen = optlen + UDPOLEN_ECHORES
 
-	#add a nop
-	optbuf[optlen] = UDPOPT_NOP
-	optlen = optlen + 1
+        #add a nop
+        optbuf[optlen] = UDPOPT_NOP
+        optlen = optlen + 1
 
-	optbuf[optlen] = UDPOPT_EOL
-	optlen = optlen + 1
+        optbuf[optlen] = UDPOPT_EOL
+        optlen = optlen + 1
 
         optbuf = optbuf[:optlen]
-	optbuf[1] = calculateocs(optbuf)
+        optbuf[1] = calculateocs(optbuf)
 
         print("{} bytes of options".format(len(optbuf)))
         print(" ".join("{:02x}".format(c) for c in optbuf))
 
-	return optbuf
+        return optbuf
 
 if __name__ == "__main__":
-	options = udp_dooptions(
-		bytearray(
+        options = udp_dooptions(
+                bytearray(
                     [0x02,0x7f,0x06,0x0A,0x40,0x30,0x20,0x10,0x40,0x30,0x20,0x10,0x05,0x04,0x0F,0x0F,0x09,0x04,0x0F,0x0F,0x0A,0x04,0x0F,0x0F,0x01,0x01,0x01,0x01,0x01,0x01,0x00]))
 
-	optbuf = udp_addoptions(options)
+        optbuf = udp_addoptions(options)
 
-	print(options)
-	print(optbuf)
+        print(options)
+        print(optbuf)
