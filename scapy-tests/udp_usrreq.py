@@ -76,7 +76,10 @@ def udp_input(pkt):
     print("ip len {}, udp len {}".format(ip.len, udp.len))
     if ip.len != udp.len+20:
         print(pkt.show())
-        pay = pkt[Raw].load
+        try:
+            pay = pkt[Raw].load
+        except IndexErro:
+            pay = b""
         opt = pkt[Padding].load
         options = udp_options.udp_dooptions(bytearray(opt)) 
 
