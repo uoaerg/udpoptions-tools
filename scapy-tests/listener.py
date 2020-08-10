@@ -6,5 +6,15 @@ def callback(pcb, data=None, options=None, error=None):
 
 if __name__ == "__main__":
     print("startings")
-    udp_usrreq.bindaddr('139.133.204.4', 2600, callback)        
+    pcb_hdr = udp_usrreq.bindaddr(
+        {
+            "address": '10.0.4.4', 
+            "port": 2600, 
+            "cb": callback
+        })
+    if not pcb_hdr:
+        print("error binding")
+        exit(1)
+    else:
+        print("bound and listening on ", pcb_hdr)
     udp_usrreq.run_loop()

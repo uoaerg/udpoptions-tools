@@ -99,7 +99,7 @@ def udp_input(pkt):
             udp_output(b"I love Options Space on a packet",
                 {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
                 options=resopt)
-        proc(proc, pay, options, None)
+        proc['cb'](proc, pay, options, None)
 
 def icmp_input(pkt):
     icmp = pkt[ICMP]
@@ -110,25 +110,27 @@ def icmp_input(pkt):
         pcb_hdr = (ip.src, udp.sport)
         if pcb_hdr in listening:
             proc = listening[pcb_hdr]
-            proc(proc, b"", None,
+            proc['cb'](proc, b"", None,
                 {'type':icmp.type, 'code':icmp.code})
         print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
     else:
         print("ICMP Packet type {} code {}".format(icmp.type, icmp.code))
 
 def pkt_input(pkt=None):
+    print("pkt input")
     if ICMP in pkt:
         icmp_input(pkt)
     if UDP in pkt:
         udp_input(pkt)
 
 def run_loop():
+    print("starting to listen")
     sniff(prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
 
-def bindaddr(addr, port, cb):
-    pcb_hdr = (addr, port)
+def bindaddr(pcb):
+    pcb_hdr = (pcb['address'], pcb['port'])
     if not pcb_hdr in listening:
-        listening[pcb_hdr] = cb
+        listening[pcb_hdr] = pcb
         return pcb_hdr
     else:
         return None
