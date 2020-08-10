@@ -27,8 +27,8 @@ def internetchecksum(pkt):
     return total ^ 0xFFFF
 
 def udpchksum(src, dst, sprt, dprt, data):
-    sourceaddr = str(bytearray([ int(x) for x in src.split(".")]))
-    destaddr = str(bytearray([ int(x) for x in dst.split(".")]))
+    sourceaddr = bytearray([ int(x) for x in src.split(".")])
+    destaddr = bytearray([ int(x) for x in dst.split(".")])
     proto = 17
     udplen = 8 + len(data)
     sport = sprt
@@ -47,7 +47,6 @@ def udpchksum(src, dst, sprt, dprt, data):
 def udp_output(data, pcb, options=None):
     ip = IP(src=pcb['src'], dst=pcb['dst'])
     udp = UDP(sport=pcb['sport'], dport=pcb['dport'])
-
     optpkt = ip/udp/data
 
     optpkt.getlayer(1).len = len(optpkt.getlayer(1)) #force UDP len
@@ -58,7 +57,7 @@ def udp_output(data, pcb, options=None):
 
     if options:
         optbuf = udp_options.udp_addoptions(options)
-        optpkt = (optpkt/str(optbuf))
+        optpkt = (optpkt/bytes(optbuf))
 
     optpkt.getlayer(1).chksum = udpchksum(pcb['src'],pcb['dst'], pcb['sport'],
 	pcb['dport'], data)
