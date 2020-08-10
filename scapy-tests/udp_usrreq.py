@@ -78,7 +78,7 @@ def udp_input(pkt):
         print(pkt.show())
         try:
             pay = pkt[Raw].load
-        except IndexErro:
+        except IndexError:
             pay = b""
         opt = pkt[Padding].load
         options = udp_options.udp_dooptions(bytearray(opt)) 
