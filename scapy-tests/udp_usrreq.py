@@ -108,10 +108,9 @@ def udp_input(pkt):
         # to packets that we generate                                           
         if doechores:                                                           
             print("udp_output replying to echo req")                            
-                udp_output(b"I love Options Space on a packet",
-                        {'src':ip.dst,'dst':ip.src,
-                            'sport':udp.dport, 'dport':udp.sport},
-                            options=resopt)
+            udp_output(b"I love Options Space on a packet",
+                {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
+                options=resopt)
         proc(proc, pay, options)
 
 def icmp_input(pkt):
