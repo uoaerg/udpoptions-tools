@@ -99,7 +99,7 @@ def udp_input(pkt):
             udp_output(b"I love Options Space on a packet",
                 {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
                 options=resopt)
-        proc(proc, pay, options)
+        proc(proc, pay, options, None)
 
 def icmp_input(pkt):
     icmp = pkt[ICMP]
