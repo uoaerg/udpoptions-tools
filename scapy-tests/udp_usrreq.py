@@ -45,6 +45,8 @@ def udpchksum(src, dst, sprt, dprt, data):
     return internetchecksum(pkt)
 
 def udp_output(data, pcb, options=None):
+    if not type(data) is bytes:
+        raise TypeError("udp_output data must be bytes object")
     ip = IP(src=pcb['src'], dst=pcb['dst'])
     udp = UDP(sport=pcb['sport'], dport=pcb['dport'])
     optpkt = ip/udp/data
@@ -90,7 +92,7 @@ def udp_input(pkt):
                 'UDPOPT_TIME': (0x11223344, 0x55667788),
                 'UDPOPT_ECHORES':reqtoken
             }
-            udp_output("",
+            udp_output(b"",
                 {'src':ip.dst,'dst':ip.src,'sport':udp.dport,'dport':udp.sport}, 
                 options=resopt)
     else:
