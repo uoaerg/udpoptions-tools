@@ -3,6 +3,12 @@ import udp_usrreq
 
 def callback(pcb, data=None, options=None, error=None):
     print(pcb)
+    if error:
+        print("UDP Data:\t", data)
+    if error:
+        print("UDP Options:\t", options)
+    if error:
+        print("ICMP:\t", error)
 
 if __name__ == "__main__":
     print("startings")
