@@ -92,6 +92,7 @@ def udp_input(pkt):
     pcb_hdr = (ip.dst, udp.dport)
     if pcb_hdr in listening:
         proc = listening[pcb_hdr]
+        proc['peerinfo'] = (ip.src, udp.sport)
         # only do an echo request if there is a process listening               
         # on this address. This has the side effect of not responding           
         # to packets that we generate                                           
