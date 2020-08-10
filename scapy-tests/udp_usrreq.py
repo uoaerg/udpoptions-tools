@@ -69,6 +69,7 @@ def udp_output(data, pcb, options=None):
     send(optpkt)
 
 def udp_input(pkt):
+    doechores = False
     ip = pkt[IP]
     udp = pkt[UDP]
     options = None
@@ -95,15 +96,22 @@ def udp_input(pkt):
                 'UDPOPT_TIME': (0x11223344, 0x55667788),
                 'UDPOPT_ECHORES':reqtoken
             }
-            udp_output(b"",
-                {'src':ip.dst,'dst':ip.src,'sport':udp.dport,'dport':udp.sport}, 
-                options=resopt)
+            doechores = True
     else:
         print("no options")
 
     pcb_hdr = (ip.dst, udp.dport)
     if pcb_hdr in listening:
         proc = listening[pcb_hdr]
+        # only do an echo request if there is a process listening               
+        # on this address. This has the side effect of not responding           
+        # to packets that we generate                                           
+        if doechores:                                                           
+            print("udp_output replying to echo req")                            
+                udp_output(b"I love Options Space on a packet",
+                        {'src':ip.dst,'dst':ip.src,
+                            'sport':udp.dport, 'dport':udp.sport},
+                            options=resopt)
         proc(proc, pay, options)
 
 def icmp_input(pkt):
