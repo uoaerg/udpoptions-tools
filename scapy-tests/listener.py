@@ -18,7 +18,7 @@ def callback(pcb, data=None, options=None, error=None):
     # be an echo server
     if data and not error:
         udp_usrreq.udp_output(data, 
-            {"src": pcb['address'], "dst": pcb['peerinfo'][0], "sport": 2500, "dport": 2600})
+            {"src": pcb['address'], "dst": pcb['peerinfo'][0], "sport": 2600, "dport": 2500})
 
 if __name__ == "__main__":
     print("startings")
