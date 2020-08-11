@@ -64,7 +64,7 @@ def udp_output(data, pcb, options=None):
     optpkt.getlayer(1).chksum = udpchksum(pcb['src'],pcb['dst'], pcb['sport'],
 	pcb['dport'], data)
     optpkt.getlayer(1).len = udplen
-    send(optpkt, verbose=True)
+    send(optpkt, verbose=False)
 
 def udp_input(pkt):
     doechores = False
