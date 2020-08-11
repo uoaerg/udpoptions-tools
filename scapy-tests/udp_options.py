@@ -149,12 +149,17 @@ def udp_addoptions(opts):
 
         return optbuf
 
+def checkocsfromstr(options):
+    data = bytearray(int(x, 16) for x in options.split(" "))
+    res = calculateocs(data)
+    print(res)
+    
+
 if __name__ == "__main__":
-        options = udp_dooptions(
-                bytearray(
-                    [0x02,0x7f,0x06,0x0A,0x40,0x30,0x20,0x10,0x40,0x30,0x20,0x10,0x05,0x04,0x0F,0x0F,0x09,0x04,0x0F,0x0F,0x0A,0x04,0x0F,0x0F,0x01,0x01,0x01,0x01,0x01,0x01,0x00]))
+        import sys
 
-        optbuf = udp_addoptions(options)
-
-        print(options)
-        print(optbuf)
+        if len(sys.argv) > 1:
+            data = bytearray(int(x, 16) for x in sys.argv[1:])
+            print(udp_dooptions(data))
+        else:
+            print("Stand alone enter option data as args i.e, python3 udp_options.py  02 fe 06 0a 11 22 33 44 55 66 77 88 0a 06 00 00 33 44 01 00")
