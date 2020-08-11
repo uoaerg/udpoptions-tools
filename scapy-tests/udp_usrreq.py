@@ -97,7 +97,7 @@ def udp_input(pkt):
         # only do an echo request if there is a process listening               
         # on this address. This has the side effect of not responding           
         # to packets that we generate                                           
-        if doechores and pcb_hdr['sendecho']:
+        if doechores and proc['sendecho']:
             udp_output(b"I love Options Space on a packet",
                 {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
                 options=resopt)
