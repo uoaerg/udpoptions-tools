@@ -97,7 +97,7 @@ def udp_input(pkt):
         # only do an echo request if there is a process listening               
         # on this address. This has the side effect of not responding           
         # to packets that we generate                                           
-        if doechores:                                                           
+        if doechores and pcb_hdr['sendecho']:
             udp_output(b"I love Options Space on a packet",
                 {'src':ip.dst,'dst':ip.src, 'sport':udp.dport, 'dport':udp.sport}, 
                 options=resopt)
@@ -136,6 +136,8 @@ def stop_run_loop(sniffer):
     sniffer.stop()
 
 def bindaddr(pcb):
+    if not 'sendecho' in pcb:
+        pcb['sendecho'] = False
     pcb_hdr = (pcb['address'], pcb['port'])
     if not pcb_hdr in listening:
         listening[pcb_hdr] = pcb
