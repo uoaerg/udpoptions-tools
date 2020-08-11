@@ -143,6 +143,10 @@ def bindaddr(pcb):
     else:
         return None
 
+def cancelbind(pcb_hdr):
+    if pcb_hdr in listening:
+        listening.remove(pcb_hdr)
+
 if __name__ == "__main__":
     run_loop()
     print("All done!")
