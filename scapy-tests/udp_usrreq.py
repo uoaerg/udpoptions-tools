@@ -64,7 +64,7 @@ def udp_output(data, pcb, options=None):
     optpkt.getlayer(1).chksum = udpchksum(pcb['src'],pcb['dst'], pcb['sport'],
 	pcb['dport'], data)
     optpkt.getlayer(1).len = udplen
-    send(optpkt, verbose=False)
+    send(optpkt, verbose=True)
 
 def udp_input(pkt):
     doechores = False
@@ -72,11 +72,12 @@ def udp_input(pkt):
     udp = pkt[UDP]
     options = None
 
+    try:
+        pay = pkt[Raw].load
+    except IndexError:
+        pay = b""
+
     if ip.len != udp.len+20:
-        try:
-            pay = pkt[Raw].load
-        except IndexError:
-            pay = b""
         opt = pkt[Padding].load
         options = udp_options.udp_dooptions(bytearray(opt)) 
 
@@ -106,7 +107,10 @@ def icmp_input(pkt):
     icmp = pkt[ICMP]
     if icmp.type == 3:
         ip = pkt['IP in ICMP']
-        udp = pkt['UDP in ICMP']
+        try:
+            udp = pkt['UDP in ICMP']
+        except IndexError:
+            import pdb; pdb.set_trace()
 
         pcb_hdr = (ip.src, udp.sport)
         if pcb_hdr in listening:
@@ -121,7 +125,15 @@ def pkt_input(pkt=None):
         udp_input(pkt)
 
 def run_loop():
-    sniff(prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
+    sniff(iface="bridge0", prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
+
+def start_run_loop():
+    sniffer = AsyncSniffer(iface="bridge0",prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
+    sniffer.start()
+    return sniffer
+
+def stop_run_loop(sniffer):
+    sniffer.stop()
 
 def bindaddr(pcb):
     pcb_hdr = (pcb['address'], pcb['port'])
