@@ -124,11 +124,13 @@ def pkt_input(pkt=None):
     if UDP in pkt:
         udp_input(pkt)
 
-def run_loop():
-    sniff(iface="bridge0", prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
+def run_loop(interface=None):
+    sniff(iface=interface,
+        prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
 
-def start_run_loop():
-    sniffer = AsyncSniffer(iface="bridge0",prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
+def start_run_loop(interface=None):
+    sniffer = AsyncSniffer(iface=interface,
+        prn= lambda x: pkt_input(x), filter="icmp or (udp and port 2500)")
     sniffer.start()
     return sniffer
 
