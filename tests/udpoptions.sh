@@ -1,0 +1,117 @@
+. utils.subr
+
+#	  +-------- host --------+
+#	  |                      |
+#	  |  +--+       +------+ |
+#	  |  |tp|------>| echo | |
+#	  |  +--+       +-jail-+ |
+#	  +----------------------+
+#	   epairXa       epairXb
+#	 192.168.2.2   192.168.2.1
+# 
+# epair:     outer
+# jail:                   zeist
+#
+setup_simple() 
+{
+	outer=$(vnet_mkepair)
+	ifconfig ${outer}a 192.0.2.2/24 up
+
+	vnet_mkjail zeist ${outer}b 
+	jexec zeist ifconfig ${outer}b 192.0.2.1/24 up
+
+	disable_udp_options zeist
+	drop_local_icmp_unreach 192.168.2.2
+
+	echo zeist
+}
+
+#	  +--------------- host -----------------+
+#	  |                                      |
+#	  |  +--+       +--------+      +------+ |
+#	  |  |tp|<----->| router |<---->| echo | |
+#	  |  +--+       +--jail--+      +-jail-+ |
+#	  +--------------------------------------+
+#	   epairXa       epairXb        epairNa
+#	 192.168.2.2   192.168.2.1     192.51.100.2
+#			 epairNb
+#	    	       192.51.100.1      
+# epair:     outer                        inner
+# jail:                 tolbooth        bassrock
+#
+setup_routed() 
+{
+	outer=$(vnet_mkepair)
+	inner=$(vnet_mkepair)
+
+	ifconfig ${epair}a 192.0.2.2/24 up
+
+	vnet_mkjail tolbooth ${inner}b ${inner}b
+	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
+	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
+	jexec tolbooth route add -net 192.168.2.0/24 192.168.2.1
+	jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
+
+	vnet_mkjail bassrock ${inner}a
+	jexec bassrock ifconfig ${inner}b 192.51.100.2/24 upq
+	jexec bassrock route add default 192.51.100.1
+
+	disable_udp_options tolbooth
+	disable_udp_options bassrock
+
+	drop_local_icmp_unreach 192.51.100.2
+
+	echo tolbooth bassrock
+}
+
+cleanup()
+{
+	vnet_cleanup
+}
+
+enable_udp_options()
+{
+	jexec $1 sysctl net.inet.udp.process_udp_options=1
+}
+
+disable_udp_options()
+{
+	jexec $1 sysctl net.inet.udp.process_udp_options=0
+}
+
+# drop locally generated icmp unreach so scapy processes don't reply with it
+drop_local_icmp_unreach()
+{
+	ipfw table 1 add $1
+	ipfw add 00200 deny icmp from me to "table(1)" icmptypes 3
+	#jexec $1 ipfw add 00200 deny icmp from me to "table(1)" via vtnet0 icmptypes 3
+}
+
+pingtest()
+{
+	ping -c 1 -t 1 $1
+	if [ $? -ne 0 ]
+	then
+	        echo "error pinging $1"
+	fi
+}
+
+run_tests()
+{
+	localif="192.168.2.2"
+	routerlocalif="192.168.2.1"
+	routerremoteif="192.51.100.1"
+	remoteif="192.51.100.2"
+
+	setup_simple
+	pingtest $localif
+	pingtest $routelocalif
+	cleanup
+
+	setup_routed
+	pingtest $localif
+	pingtest $routerlocalif
+	pingtest $routerremoteif
+	pingtest $remoteif
+	cleanup
+}
