@@ -7,7 +7,7 @@
 #	  |  +--+       +-jail-+ |
 #	  +----------------------+
 #	   epairXa       epairXb
-#	 192.168.2.2   192.168.2.1
+#	 192.0.2.2   192.0.2.1
 # 
 # epair:     outer
 # jail:                   zeist
@@ -22,7 +22,7 @@ setup_simple()
 	jexec zeist ifconfig ${outer}b 192.0.2.1/24 up
 
 	disable_udp_options zeist
-	drop_local_icmp_unreach 192.168.2.2
+	drop_local_icmp_unreach 192.0.2.2
 
 	echo zeist
 }
@@ -34,7 +34,7 @@ setup_simple()
 #	  |  +--+       +--jail--+      +-jail-+ |
 #	  +--------------------------------------+
 #	   epairXa       epairXb        epairNa
-#	 192.168.2.2   192.168.2.1     192.51.100.2
+#	 192.0.2.2   192.0.2.1     192.51.100.2
 #			 epairNb
 #	    	       192.51.100.1      
 # epair:     outer                        inner
@@ -51,7 +51,7 @@ setup_routed()
 	vnet_mkjail tolbooth ${inner}b ${inner}b
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
-	jexec tolbooth route add -net 192.168.2.0/24 192.168.2.1
+	jexec tolbooth route add -net 192.0.2.0/24 192.0.2.1
 	jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
 
 	vnet_mkjail bassrock ${inner}a
@@ -103,8 +103,8 @@ pingtest()
 
 run_tests()
 {
-	localif="192.168.2.2"
-	routerlocalif="192.168.2.1"
+	localif="192.0.2.2"
+	routerlocalif="192.0.2.1"
 	routerremoteif="192.51.100.1"
 	remoteif="192.51.100.2"
 
