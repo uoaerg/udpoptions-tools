@@ -48,7 +48,7 @@ setup_routed()
 
 	ifconfig ${epair}a 192.0.2.2/24 up
 
-	vnet_mkjail tolbooth ${inner}b ${inner}b
+	vnet_mkjail tolbooth ${outer}b ${inner}b
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
 	jexec tolbooth route add -net 192.0.2.0/24 192.0.2.1
