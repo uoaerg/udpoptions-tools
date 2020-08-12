@@ -47,7 +47,7 @@ setup_routed()
 	inner=$(vnet_mkepair)
 
 	ethaddroutera=`ifconfig ${outer}a |  grep ether | awk '{print $2}'`
-	ethaddrinner1=`ifconfig ${inner}a |  grep ether | awk '{print $2}'`
+	ethaddrinnera=`ifconfig ${inner}a |  grep ether | awk '{print $2}'`
 	ethaddrinnerb=`ifconfig ${inner}b |  grep ether | awk '{print $2}'`
 
 	echo $ethaddroutera
