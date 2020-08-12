@@ -110,7 +110,7 @@ run_tests()
 
 	setup_simple
 	pingtest $localif
-	pingtest $routelocalif
+	pingtest $routerlocalif
 	echo "tidying up simple test network"
 	cleanup
 
