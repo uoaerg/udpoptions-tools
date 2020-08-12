@@ -22,7 +22,7 @@ setup_simple()
 	jexec zeist ifconfig ${outer}b 192.0.2.1/24 up
 
 	disable_udp_options zeist
-	drop_local_icmp_unreach 192.0.2.2
+	#drop_local_icmp_unreach 192.0.2.2
 
 	echo zeist
 }
@@ -61,13 +61,14 @@ setup_routed()
 	disable_udp_options tolbooth
 	disable_udp_options bassrock
 
-	drop_local_icmp_unreach 192.51.100.2
+	#drop_local_icmp_unreach 192.51.100.2
 
 	echo tolbooth bassrock
 }
 
 cleanup()
 {
+	#ipfw -qy flush
 	vnet_cleanup
 }
 
