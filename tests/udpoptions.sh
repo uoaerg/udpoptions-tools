@@ -55,7 +55,7 @@ setup_routed()
 	jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
 
 	vnet_mkjail bassrock ${inner}a
-	jexec bassrock ifconfig ${inner}b 192.51.100.2/24 upq
+	jexec bassrock ifconfig ${inner}a 192.51.100.2/24 upq
 	jexec bassrock route add default 192.51.100.1
 
 	disable_udp_options tolbooth
