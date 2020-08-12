@@ -46,11 +46,13 @@ setup_routed()
 	outer=$(vnet_mkepair)
 	inner=$(vnet_mkepair)
 
-	ifconfig ${epair}a 192.0.2.2/24 up
+	ifconfig ${outer}a 192.0.2.2/24 up
 
 	vnet_mkjail tolbooth ${outer}b ${inner}b
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
+	jexec tolbooth route add -net 192.0.2.0/24 192.0.2.1
+	jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
 
 	vnet_mkjail bassrock ${inner}a
 	jexec bassrock ifconfig ${inner}b 192.51.100.2/24 upq
