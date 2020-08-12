@@ -122,3 +122,5 @@ run_tests()
 	echo "tidying up routed test network"
 	cleanup
 }
+
+run_tests
