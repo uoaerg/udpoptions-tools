@@ -93,6 +93,7 @@ pingtest()
 	if [ $? -ne 0 ]
 	then
 	        echo "error pinging $1"
+		exit
 	fi
 }
 
