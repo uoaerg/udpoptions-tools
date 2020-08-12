@@ -51,8 +51,6 @@ setup_routed()
 	vnet_mkjail tolbooth ${outer}b ${inner}b
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
-	jexec tolbooth route add -net 192.0.2.0/24 192.0.2.1
-	jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
 
 	vnet_mkjail bassrock ${inner}a
 	jexec bassrock ifconfig ${inner}b 192.51.100.2/24 upq
@@ -92,7 +90,7 @@ drop_local_icmp_unreach()
 
 pingtest()
 {
-	ping -c 1 -t 1 $1
+	ping -c 1 -t 1 $1 > /dev/null
 	if [ $? -ne 0 ]
 	then
 	        echo "error pinging $1"
