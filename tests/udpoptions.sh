@@ -14,6 +14,7 @@
 #
 setup_simple() 
 {
+	echo "setting up simple testnetwork"
 	outer=$(vnet_mkepair)
 	ifconfig ${outer}a 192.0.2.2/24 up
 
@@ -41,6 +42,7 @@ setup_simple()
 #
 setup_routed() 
 {
+	echo "setting routed test network"
 	outer=$(vnet_mkepair)
 	inner=$(vnet_mkepair)
 
@@ -94,6 +96,8 @@ pingtest()
 	then
 	        echo "error pinging $1"
 		exit
+	else
+	        echo "success pinging $1"
 	fi
 }
 
@@ -107,6 +111,7 @@ run_tests()
 	setup_simple
 	pingtest $localif
 	pingtest $routelocalif
+	echo "tidying up simple test network"
 	cleanup
 
 	setup_routed
@@ -114,5 +119,6 @@ run_tests()
 	pingtest $routerlocalif
 	pingtest $routerremoteif
 	pingtest $remoteif
+	echo "tidying up routed test network"
 	cleanup
 }
