@@ -46,17 +46,32 @@ setup_routed()
 	outer=$(vnet_mkepair)
 	inner=$(vnet_mkepair)
 
+	ethaddroutera=`ifconfig ${outer}a |  grep ether | awk '{print $2}'`
+	ethaddrinner1=`ifconfig ${inner}a |  grep ether | awk '{print $2}'`
+	ethaddrinnerb=`ifconfig ${inner}b |  grep ether | awk '{print $2}'`
+
+	echo $ethaddroutera
+	echo $ethaddrinnera
+	echo $ethaddrinnerb
+
 	ifconfig ${outer}a 192.0.2.2/24 up
 
 	vnet_mkjail tolbooth ${outer}b ${inner}b
+
+	jexec tolbooth sysctl net.inet.ip.forwarding=1
+
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
-	jexec tolbooth sysctl net.inet.ip.forwarding=1
+
+	jexec tolbooth arp -s 192.0.2.2 $ethaddroutera
+	jexec tolbooth arp -s 192.51.100.2 $ethaddrinnera
+
 	#jexec tolbooth route add -net 192.0.2.0/24 192.0.2.1
 	#jexec tolbooth route add -net 192.51.100.0/24 192.51.100.1
 
 	vnet_mkjail bassrock ${inner}a
 	jexec bassrock ifconfig ${inner}a 192.51.100.2/24 up
+	jexec bassrock arp -s 192.51.100.1 $ethaddrouterb
 	#jexec bassrock route add default 192.51.100.1
 
 	disable_udp_options tolbooth
