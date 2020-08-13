@@ -187,7 +187,7 @@ test_minimum_udpoptions()
 		echo "test 'send->silence' failed expected $expect got $?"
 	fi
 
-	echo_server_stop
+	echo_server_stop $remotejail $echoserverpid
 
 	echoserverpid=`echo_server_start`
 	enable_udp_options $remotejail
@@ -199,7 +199,7 @@ test_minimum_udpoptions()
 		echo "test 'send->silence' failed expected $expect got $?"
 	fi
 
-	echo_server_stop
+	echo_server_stop $remotejail $echoserverpid
 }
 
 # emulate kyua test for now
@@ -218,7 +218,7 @@ test_run()
 
 echo_server_start()
 {	
-	echoserverpath="/home/tj/udpoptions-tools/usertools"
+	echoserverpath="/home/tj/udpoptions-tools/usertools/echoserver.bin"
 	jexec $1 $echoserverpath &
 	echo $!
 }
@@ -228,4 +228,15 @@ echo_server_stop()
 	jexec $1 kill $2
 }
 
+compile_tools()
+{
+	cd /home/tj/udpoptions-tools/usertools/echoserver.bin
+
+	for x in *.c
+	do
+		cc $x -o `basename $x .c`.bin
+	done
+}
+
+compile_tools
 run_tests test_minimum_udpoptions
