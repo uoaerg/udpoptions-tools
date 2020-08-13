@@ -179,6 +179,27 @@ test_minimum_udpoptions()
 		echo "test 'send->silence' failed expected $expect got $?"
 	fi
 
+	echoserverpid=`echo_server_start`
+	expect=0
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e nooptions -i $testif -s $addrs $udpoptions
+	if [ $? -ne $expect ]
+	then
+		echo "test 'send->silence' failed expected $expect got $?"
+	fi
+
+	echo_server_stop
+
+	echoserverpid=`echo_server_start`
+	enable_udp_options $remotejail
+
+	expect=0
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e options -i $testif -s $addrs $udpoptions
+	if [ $? -ne $expect ]
+	then
+		echo "test 'send->silence' failed expected $expect got $?"
+	fi
+
+	echo_server_stop
 }
 
 # emulate kyua test for now
@@ -195,11 +216,16 @@ test_run()
 	fi
 }
 
-echo_server_run()
+echo_server_start()
 {	
 	echoserverpath="/home/tj/udpoptions-tools/usertools"
 	jexec $1 $echoserverpath &
 	echo $!
+}
+
+echo_server_stop()
+{
+	jexec $1 kill $2
 }
 
 run_tests test_minimum_udpoptions
