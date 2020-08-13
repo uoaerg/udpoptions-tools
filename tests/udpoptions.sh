@@ -177,6 +177,8 @@ test_minimum_udpoptions()
 	if [ $? -ne $expect ]
 	then
 		echo "test 'send->silence' failed expected $expect got $?"
+	else
+		echo "test 'send->silence' passed"
 	fi
 
 	echo_server_start $remotejail &
@@ -185,7 +187,9 @@ test_minimum_udpoptions()
 	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e nooptions -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
-		echo "test 'send->silence' failed expected $expect got $?"
+		echo "test 'send->no options' failed expected $expect got $?"
+	else
+		echo "test 'send->no options' passed"
 	fi
 
 	echo_server_stop $remotejail $echoserverpid
@@ -196,7 +200,9 @@ test_minimum_udpoptions()
 	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e options -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
-		echo "test 'send->silence' failed expected $expect got $?"
+		echo "test 'send->options' failed expected $expect got $?"
+	else
+		echo "test 'send->options' passed"
 	fi
 
 	echo_server_stop $remotejail $echoserverpid
