@@ -28,7 +28,7 @@ setup_simple()
 	disable_udp_options zeist
 	#drop_local_icmp_unreach 192.0.2.2
 
-	echo ${outer}a
+	echo zeist ${outer}a
 }
 
 #	  +--------------- host -----------------+
@@ -122,23 +122,25 @@ pingtest()
 
 run_tests()
 {
-	localif="192.0.2.2"
-	routerlocalif="192.0.2.1"
-	routerremoteif="192.51.100.1"
-	remoteif="192.51.100.2"
+	tests=$1
 
-	testif=`setup_simple`
-	echo testif $testif
+	localaddr="192.0.2.2"
+	routerlocaladdr="192.0.2.1"
+	routerremoteaddr="192.51.100.1"
+	remoteaddr="192.51.100.2"
+
+	set `setup_simple`
+	remotejail=$1
+	testif=$2
 
 	echo "Testing interfaces work with ping"
 	pingtest $localif
 	pingtest $routerlocalif
 
 	echo "running tests"
-
-	for test in $1
+	for test in $tests
 	do
-		$test $testif $localaddr $SRCPORT $remotaddr $DSTPORT
+		$test $remotejail $testif $localaddr $SRCPORT $remotaddr $DSTPORT
 	done
 
 	echo "tidying up simple test network"
@@ -157,10 +159,42 @@ run_tests()
 
 test_minimum_udpoptions()
 {	
-	options="02 fd 00"
+	udpoptions="02 fd 00"
 	#        ----- --
 	#         ocs  eol
-	python3 ../scapy_tests/sendoptions.py -v -i $1 -s $2 $3 $4 $5 $options
+	remotejail=$1
+	testif=$2
+	shift
+	shift
+	addrs=$@
+
+	python3 ../scapy_tests/sendoptions.py -v -e silence -i $testif -s $addrs $udpoptions
+	if [ $? -ne $expect ]
+	then
+		echo "test 'send->silence' failed expected $expect got $?"
+	fi
+
+}
+
+# emulate kyua test for now
+test_run()
+{
+	expect = $1
+	shift
+
+	$@
+
+	if [ $? -ne $expect ]
+	then
+		echo "test $1 failed expected $expect got $?"
+	fi
+}
+
+echo_server_run()
+{	
+	echoserverpath="/home/tj/udpoptions-tools/usertools"
+	jexec $1 $echoserverpath &
+	echo $!
 }
 
 run_tests test_minimum_udpoptions
