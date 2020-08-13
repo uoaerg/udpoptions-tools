@@ -1,5 +1,9 @@
 . vnet.subr
 
+# default variables used in tests
+SRCPORT=2500
+DSTPORT=7		# udp echo
+
 #	  +-------- host --------+
 #	  |                      |
 #	  |  +--+       +------+ |
@@ -24,7 +28,7 @@ setup_simple()
 	disable_udp_options zeist
 	#drop_local_icmp_unreach 192.0.2.2
 
-	echo zeist
+	echo ${outer}a
 }
 
 #	  +--------------- host -----------------+
@@ -77,7 +81,7 @@ setup_routed()
 
 	#drop_local_icmp_unreach 192.51.100.2
 
-	echo tolbooth bassrock
+	echo ERRORINTERFACENAMESHOULDBERETURNEDHERE
 }
 
 cleanup()
@@ -123,19 +127,40 @@ run_tests()
 	routerremoteif="192.51.100.1"
 	remoteif="192.51.100.2"
 
-	setup_simple
+	testif=`setup_simple`
+	echo testif $testif
+
+	echo "Testing interfaces work with ping"
 	pingtest $localif
 	pingtest $routerlocalif
+
+	echo "running tests"
+
+	for test in $1
+	do
+		$test $testif $localaddr $SRCPORT $remotaddr $DSTPORT
+	done
+
 	echo "tidying up simple test network"
 	cleanup
 
-	setup_routed
-	pingtest $localif
-	pingtest $routerlocalif
-	pingtest $routerremoteif
-	pingtest $remoteif
-	echo "tidying up routed test network"
-	cleanup
+
+
+#	setup_routed
+#	pingtest $localif
+#	pingtest $routerlocalif
+#	pingtest $routerremoteif
+#	pingtest $remoteif
+#	echo "tidying up routed test network"
+#	cleanup
 }
 
-run_tests
+test_minimum_udpoptions()
+{	
+	options="02 fd 00"
+	#        ----- --
+	#         ocs  eol
+	python3 ../scapy_tests/sendoptions.py -v -i -s $1 $2 $3 $4 $5 $options
+}
+
+run_tests test_minimum_udpoptions
