@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--verbose', '-v', dest="VERBOSE", action='count', default=0)
 
-    parser.add_argument('-w', dest='WAITTIME', action='store', default=10, type=int,
+    parser.add_argument('-w', dest='WAITTIME', action='store', default=1, type=int,
                         help='time in seconds to wait for responses, wait time of 0 disables listening')
 
     args = parser.parse_args()
