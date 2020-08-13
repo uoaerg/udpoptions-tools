@@ -164,6 +164,7 @@ run_tests()
 
 test_minimum_udpoptions()
 {	
+	sendcmdoptions=""
 	udpoptions="02 fd 00"
 	#        ----- --
 	#         ocs  eol
@@ -174,7 +175,7 @@ test_minimum_udpoptions()
 	addrs=$@
 
 	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e silence -i $testif -s $addrs $udpoptions
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e silence -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
 		echo "test 'send->silence' failed expected $expect got $?"
@@ -182,9 +183,10 @@ test_minimum_udpoptions()
 		echo "test 'send->silence' passed"
 	fi
 
-	echoserverpid=`echo_server_start $remotejail`
+	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
+	echoserverpid=$!
 	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e nooptions -i $testif -s $addrs $udpoptions
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e nooptions -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
 		echo "test 'send->no options' failed expected $expect got $?"
@@ -192,11 +194,12 @@ test_minimum_udpoptions()
 		echo "test 'send->no options' passed"
 	fi
 
-	echo_server_stop $remotejail $echoserverpid
+	kill $echoserverpid
 
-	echoserverpid=`echo_server_start $remotejail`
+	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
+	echoserverpid=$!
 	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e options -i $testif -s $addrs $udpoptions
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e options -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
 		echo "test 'send->options' failed expected $expect got $?"
@@ -204,7 +207,7 @@ test_minimum_udpoptions()
 		echo "test 'send->options' passed"
 	fi
 
-	echo_server_stop $remotejail $echoserverpid
+	kill $echoserverpid
 }
 
 # emulate kyua test for now
@@ -219,19 +222,6 @@ test_run()
 	then
 		echo "test $1 failed expected $expect got $?"
 	fi
-}
-
-echo_server_start()
-{	
-	echoserverpath="/home/tj/udpoptions-tools/usertools/echoserver.bin"
-	jexec $1 $echoserverpath &
-	echo $!
-}
-
-echo_server_stop()
-{
-	#jexec $1 kill $2
-	kill $2
 }
 
 compile_tools()
