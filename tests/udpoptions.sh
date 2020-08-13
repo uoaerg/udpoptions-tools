@@ -144,7 +144,7 @@ run_tests()
 	echo "running tests"
 	for test in $tests
 	do
-		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
+		$test $remotejail $testif $localaddr $SRCPORT $routerlocaladdr $DSTPORT
 	done
 
 	echo "TODO CLEAN UP AT THE END"
