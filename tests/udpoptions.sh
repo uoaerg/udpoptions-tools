@@ -133,6 +133,8 @@ run_tests()
 	remotejail=$1
 	testif=$2
 
+	echo "Remote jail $remotejail test interface $testif"
+
 	echo "Testing interfaces work with ping"
 	pingtest $localaddr
 	pingtest $routerlocaladdr
