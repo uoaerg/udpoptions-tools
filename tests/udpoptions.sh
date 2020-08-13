@@ -230,7 +230,7 @@ echo_server_stop()
 
 compile_tools()
 {
-	cd /home/tj/udpoptions-tools/usertools/echoserver.bin
+	cd /home/tj/udpoptions-tools/usertools/
 
 	for x in *.c
 	do
