@@ -18,7 +18,6 @@ DSTPORT=7		# udp echo
 #
 setup_simple() 
 {
-	echo "setting up simple testnetwork"
 	outer=$(vnet_mkepair)
 	ifconfig ${outer}a 192.0.2.2/24 up
 
@@ -133,7 +132,7 @@ run_tests()
 	remotejail=$1
 	testif=$2
 
-	echo "Remote jail $remotejail test interface $testif"
+	echo "Remote jail: $remotejail test interface: $testif"
 
 	echo "Testing interfaces work with ping"
 	pingtest $localaddr
@@ -145,7 +144,7 @@ run_tests()
 	echo "running tests"
 	for test in $tests
 	do
-		$test $remotejail $testif $localaddr $SRCPORT $remotaddr $DSTPORT
+		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
 	done
 
 	echo "tidying up simple test network"
@@ -173,6 +172,7 @@ test_minimum_udpoptions()
 	shift
 	addrs=$@
 
+	expect=0
 	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e silence -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
