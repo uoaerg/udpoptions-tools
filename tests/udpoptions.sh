@@ -147,8 +147,9 @@ run_tests()
 		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
 	done
 
-	echo "tidying up simple test network"
-	cleanup
+	echo "TODO CLEAN UP AT THE END"
+	#echo "tidying up simple test network"
+	#cleanup
 
 
 
@@ -229,7 +230,8 @@ echo_server_start()
 
 echo_server_stop()
 {
-	jexec $1 kill $2
+	#jexec $1 kill $2
+	kill $2
 }
 
 compile_tools()
