@@ -179,7 +179,8 @@ test_minimum_udpoptions()
 		echo "test 'send->silence' failed expected $expect got $?"
 	fi
 
-	echoserverpid=`echo_server_start $remotejail`
+	echo_server_start $remotejail &
+	echoserverpid=$!
 	expect=0
 	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e nooptions -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
@@ -189,9 +190,8 @@ test_minimum_udpoptions()
 
 	echo_server_stop $remotejail $echoserverpid
 
-	echoserverpid=`echo_server_start $remotejail`
-	enable_udp_options $remotejail
-
+	echo_server_start $remotejail &
+	echoserverpid=$!
 	expect=0
 	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e options -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
