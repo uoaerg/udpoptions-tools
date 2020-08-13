@@ -160,7 +160,7 @@ test_minimum_udpoptions()
 	options="02 fd 00"
 	#        ----- --
 	#         ocs  eol
-	python3 ../scapy_tests/sendoptions.py -v -i -s $1 $2 $3 $4 $5 $options
+	python3 ../scapy_tests/sendoptions.py -v -i $1 -s $2 $3 $4 $5 $options
 }
 
 run_tests test_minimum_udpoptions
