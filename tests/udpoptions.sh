@@ -134,8 +134,8 @@ run_tests()
 	testif=$2
 
 	echo "Testing interfaces work with ping"
-	pingtest $localif
-	pingtest $routerlocalif
+	pingtest $localaddr
+	pingtest $routerlocaladdr
 
 	echo "running tests"
 	for test in $tests
@@ -149,10 +149,10 @@ run_tests()
 
 
 #	setup_routed
-#	pingtest $localif
-#	pingtest $routerlocalif
-#	pingtest $routerremoteif
-#	pingtest $remoteif
+#	pingtest $localaddr
+#	pingtest $routerlocaladdr
+#	pingtest $routerremoteaddr
+#	pingtest $remoteaddr
 #	echo "tidying up routed test network"
 #	cleanup
 }
