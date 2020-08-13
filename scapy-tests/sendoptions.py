@@ -71,6 +71,8 @@ if __name__ == "__main__":
         else:
             data = bytearray(int(x, 16) for x in args.OPTIONDATA)
             options = udp_options.udp_dooptions(data)
+            if args.VERBOSE:
+                print(options)
 
     if not args.SENDPACKET:
         sys.exit(0)
