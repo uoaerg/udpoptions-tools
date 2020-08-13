@@ -137,6 +137,9 @@ run_tests()
 	pingtest $localaddr
 	pingtest $routerlocaladdr
 
+	echo "simple network set up and ping works, press enter to continue"
+	read $throwaway
+
 	echo "running tests"
 	for test in $tests
 	do
@@ -168,7 +171,7 @@ test_minimum_udpoptions()
 	shift
 	addrs=$@
 
-	python3 ../scapy_tests/sendoptions.py -v -e silence -i $testif -s $addrs $udpoptions
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py -v -e silence -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
 		echo "test 'send->silence' failed expected $expect got $?"
