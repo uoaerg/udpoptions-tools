@@ -2,6 +2,7 @@ import udp_options
 import udp_usrreq
 import time
 import argparse
+import sys
 
 EXPECTEDRESULTS = [
     'anything',
@@ -12,7 +13,12 @@ EXPECTEDRESULTS = [
     'validtime',
 ]
 
+packets = []
+
 def callback(pcb, data=None, options=None, error=None):
+    global packets
+    packets.append((pcb, data, options, error))
+
     print(pcb)
     print(options)
     return
@@ -61,18 +67,18 @@ if __name__ == "__main__":
     if args.OPTIONDATA:
         if args.HEXDUMP:
             print('hexdump output is NOT IMPLEMENTED')
-            exit(1)
+            sys.exit(1)
         else:
             data = bytearray(int(x, 16) for x in args.OPTIONDATA)
             options = udp_options.udp_dooptions(data)
 
     if not args.SENDPACKET:
-        exit(0)
+        sys.exit(0)
     else:
         BINDADDR = args.SENDPACKET[0]
-        SPORT = args.SENDPACKET[1]
+        SPORT = int(args.SENDPACKET[1])
         DESTADDR = args.SENDPACKET[2]
-        DPORT = args.SENDPACKET[3]
+        DPORT = int(args.SENDPACKET[3])
 
     if args.VERBOSE:
         print("sending to:\t", (BINDADDR, SPORT), (DESTADDR, DPORT))
@@ -85,15 +91,13 @@ if __name__ == "__main__":
         else:
             print("not listening for any response") 
 
-        print("expecting response of: ", args.EXPECT)
+        if args.EXPECT:
+            print("expecting response of: ", args.EXPECT)
 
     if args.FIREWALL:
         print("firewall configuration is NOT IMPLEMENTED")
-        exit(1)
+        sys.exit(1)
 
-    exit(1)
-
-    # old talker program from here
     pcb_hdr = udp_usrreq.bindaddr(
         {
             "address": BINDADDR,
@@ -102,19 +106,47 @@ if __name__ == "__main__":
         })
     if not pcb_hdr:
         print("failed to bind")
-        exit(1)
-    opts = { 'UDPOPT_TIME': (0x11223344, 0x55667788), 
-             'UDPOPT_MSS': 0x1122,
-             'UDPOPT_ECHOREQ':0xabcd,
-             'UDPOPT_ECHORES':0xabcd
-    }
+        sys.exit(1)
+
+#    opts = { 'UDPOPT_TIME': (0x11223344, 0x55667788), 
+#             'UDPOPT_MSS': 0x1122,
+#             'UDPOPT_ECHOREQ':0xabcd,
+#             'UDPOPT_ECHORES':0xabcd
+#    }
 
     sniffer = udp_usrreq.start_run_loop(args.INTERFACE)
 
     udp_usrreq.udp_output(b"Hello Options Space on a packet\n",
         {"src": BINDADDR, "dst": DESTADDR, "sport": SPORT, "dport": DPORT},
-        options=opts)
+        options=options)
 
     # wait for any response
-    time.sleep(WAITTIME)
+    time.sleep(args.WAITTIME)
     udp_usrreq.stop_run_loop(sniffer)
+
+    print("recived {} packets in {} seconds listening".format(len(packets), args.WAITTIME))
+
+    if not args.EXPECT:
+        sys.exit(0)
+
+    for expectation in args.EXPECT:
+        if expectation[0] == "silence":
+            if len(packets) == 0:
+                sys.exit(0)
+            else: 
+                sys.exit(1)
+
+        # I suspect a lot more parsing is required to do this correctly. I really
+        # need progress so I am going to be hacky until I have something that works
+        # then try and make it gooder.
+
+        if expectation[0] == "nooptions":
+            for p in packets:
+                if p[2]:
+                    sys.exit(1)
+            sys.exit(0)
+        if expectation[0] == "options":
+            for p in packets:
+                if p[2]:
+                    sys.exit(0)
+            sys.exit(1)
