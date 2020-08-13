@@ -140,7 +140,7 @@ run_tests()
 	pingtest $routerlocaladdr
 
 	echo "simple network set up and ping works, press enter to continue"
-	read $throwaway
+	read throwaway
 
 	echo "running tests"
 	for test in $tests
