@@ -60,7 +60,7 @@ setup_routed()
 	ethaddrinnerb=`ifconfig ${inner}b |  grep ether | awk '{print $2}'`
 
 	ifconfig ${outer}a 192.0.2.2/24 up
-	route add -net 192.51.100.0/24 192.0.2.1
+	route -q add -net 192.51.100.0/24 192.0.2.1
 
 	vnet_mkjail tolbooth ${outer}b ${inner}b
 
@@ -78,7 +78,7 @@ setup_routed()
 
 	jexec bassrock ifconfig ${inner}a 192.51.100.2/24 up
 	jexec bassrock arp -s 192.51.100.1 $ethaddrinnerb
-	jexec bassrock route add -net 192.0.2.0/24 192.51.100.1
+	jexec bassrock route -q add -net 192.0.2.0/24 192.51.100.1
 
 	disable_udp_options tolbooth
 	disable_udp_options bassrock
