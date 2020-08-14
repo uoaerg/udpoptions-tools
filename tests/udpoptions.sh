@@ -149,11 +149,8 @@ run_tests()
 		$test $remotejail $testif $localaddr $SRCPORT $routerlocaladdr $DSTPORT
 	done
 
-	echo "TODO CLEAN UP AT THE END"
-	#echo "tidying up simple test network"
-	#cleanup
-
-
+	echo "tidying up simple test network"
+	cleanup
 
 #	setup_routed
 #	pingtest $localaddr
