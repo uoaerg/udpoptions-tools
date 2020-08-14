@@ -176,12 +176,12 @@ test_minimum_udpoptions()
 	addrs=$@
 
 	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e silence -i $testif -s $addrs $udpoptions
+	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e icmponly -i $testif -s $addrs $udpoptions
 	if [ $? -ne $expect ]
 	then
-		echo "test 'send->silence' failed expected $expect got $?"
+		echo "test 'send->icmponly' failed expected $expect got $?"
 	else
-		echo "test 'send->silence' passed"
+		echo "test 'send->icmponly' passed"
 	fi
 
 	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
