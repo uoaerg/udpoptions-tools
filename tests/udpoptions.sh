@@ -248,5 +248,6 @@ compile_tools()
 	cd -
 }
 
+kldload epair
 compile_tools
 run_tests test_minimum_udpoptions
