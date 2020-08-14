@@ -167,7 +167,6 @@ run_tests()
 
 test_minimum_udpoptions()
 {	
-	sendcmdoptions=$sendextraflags
 	udpoptions="02 fd 00"
 	#        ----- --
 	#         ocs  eol
@@ -177,54 +176,41 @@ test_minimum_udpoptions()
 	shift
 	addrs=$@
 
-	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e icmponly -i $testif -s $addrs $udpoptions
-	if [ $? -ne $expect ]
-	then
-		echo "test 'send->icmponly' failed expected $expect got $?"
-	else
-		echo "test 'send->icmponly' passed"
-	fi
+	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e icmponly -i $testif -s $addrs $udpoptions $sendextraflags"
+	test_run "send->icmponly" 0 "$cmd"
 
 	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
 	echoserverpid=$!
-	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e nooptions -i $testif -s $addrs $udpoptions
-	if [ $? -ne $expect ]
-	then
-		echo "test 'send->no options' failed expected $expect got $?"
-	else
-		echo "test 'send->no options' passed"
-	fi
-
+	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e nooptions -i $testif -s $addrs $udpoptions $sendextraflags"
+	test_run "send->nooptions" 0 "$cmd"
 	kill $echoserverpid
 
 	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
 	echoserverpid=$!
-	expect=0
-	python3 /home/tj/udpoptions-tools/scapy-tests/sendoptions.py $sendcmdoptions -e options -i $testif -s $addrs $udpoptions
-	if [ $? -ne $expect ]
-	then
-		echo "test 'send->options' failed expected $expect got $?"
-	else
-		echo "test 'send->options' passed"
-	fi
-
+	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e options -i $testif -s $addrs $udpoptions $sendextraflags"
+	test_run "send->options" 0 "$cmd"
 	kill $echoserverpid
+
 }
 
 # emulate kyua test for now
 test_run()
 {
-	expect = $1
-	shift
+        testname=$1
+        expect=$2
+        cmd=$3
 
-	$@
+        python3 $cmd
 
-	if [ $? -ne $expect ]
-	then
-		echo "test $1 failed expected $expect got $?"
-	fi
+        result=$?
+
+        if [ $result -ne $expect ]
+        then
+                printf "test $testname failed expected $expect got $result\n"
+                printf "test:\t $testname expecting $expect running command $cmd\n"
+        else
+                printf "test $testname passed\n"
+        fi
 }
 
 compile_tools()
