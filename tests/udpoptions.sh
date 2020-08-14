@@ -2,8 +2,7 @@
 
 . vnet.subr
 
-VERBOSE=$1
-sendextraflags=$VERBOSE
+sendextraflags=$@
 
 # default variables used in tests
 SRCPORT=2500
