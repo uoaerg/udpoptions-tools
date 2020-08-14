@@ -1,3 +1,5 @@
+#!/bin/sh
+
 . vnet.subr
 
 # default variables used in tests
