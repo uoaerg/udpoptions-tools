@@ -122,8 +122,6 @@ pingtest()
 	then
 	        echo "error pinging $1"
 		exit
-	else
-	        echo "success pinging $1"
 	fi
 }
 
@@ -145,13 +143,12 @@ run_tests()
 	remotejail=$1
 	testif=$2
 
-	echo "Remote jail: $remotejail test interface: $testif"
-	echo "Testing interfaces work with ping"
+	#echo "Remote jail: $remotejail test interface: $testif"
 	pingtest $localaddr
 	pingtest $routerlocaladdr
 
-	echo "simple network set up and ping works, press enter to continue"
-	read throwaway
+	#echo "simple network set up and ping works, press enter to continue"
+	#read throwaway
 
 	echo "running tests: $tests"
 	for test in $tests
@@ -159,7 +156,6 @@ run_tests()
 		$test $remotejail $testif $localaddr $SRCPORT $routerlocaladdr $DSTPORT
 	done
 
-	echo "tidying up simple test network"
 	cleanup
 
 	#
@@ -171,15 +167,14 @@ run_tests()
 	remotejail=$1
 	testif=$2
 
-	echo "Remote jail: $remotejail test interface: $testif"
-	echo "Testing interfaces work with ping"
+	#echo "Remote jail: $remotejail test interface: $testif"
 	pingtest $localaddr
 	pingtest $routerlocaladdr
 	pingtest $routerremoteaddr
 	pingtest $remoteaddr
 
-	echo "routed network set up and ping works, press enter to continue"
-	read throwaway
+	#echo "routed network set up and ping works, press enter to continue"
+	#read throwaway
 
 	echo "running tests: $tests"
 	for test in $tests
@@ -187,7 +182,6 @@ run_tests()
 		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
 	done
 
-	echo "tidying up routed test network"
 	cleanup
 }
 
