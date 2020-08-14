@@ -185,11 +185,14 @@ test_minimum_udpoptions()
 	test_run "send->nooptions" 0 "$cmd"
 	kill $echoserverpid
 
+	# test echo server with minimal udp options
+	enable_udp_options $remotejail
 	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin &
 	echoserverpid=$!
 	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e options -i $testif -s $addrs $udpoptions $sendextraflags"
 	test_run "send->options" 0 "$cmd"
 	kill $echoserverpid
+	disable_udp_options $remotejail
 
 }
 
