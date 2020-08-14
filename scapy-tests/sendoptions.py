@@ -19,18 +19,9 @@ def callback(pcb, data=None, options=None, error=None):
     global packets
     packets.append((pcb, data, options, error))
 
-    print(pcb)
-    print(options)
+    if args.VERBOSE:
+        print((pcb, data, options, error))
     return
-    if data or options:
-        print("got a packet back")
-        print(pcb)
-        print(data)
-        print(options)
-    else:
-        print("got not a packet back")
-        print(pcb)
-        print(error)
 
 if __name__ == "__main__":
 
