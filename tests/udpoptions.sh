@@ -234,6 +234,8 @@ compile_tools()
 	do
 		cc $x -o `basename $x .c`.bin
 	done
+
+	cd -
 }
 
 compile_tools
