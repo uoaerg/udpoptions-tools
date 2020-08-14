@@ -178,7 +178,6 @@ run_tests()
 	pingtest $routerlocaladdr
 	pingtest $routerremoteaddr
 	pingtest $remoteaddr
-	pingtest $
 
 	echo "routed network set up and ping works, press enter to continue"
 	read throwaway
