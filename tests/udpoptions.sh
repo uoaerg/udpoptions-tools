@@ -235,12 +235,11 @@ test_run()
 
         if [ $result -ne $expect ]
         then
-                printf "\e[1;32m test $testname failed expected $expect got $result \e[0m\n"
+                printf "test $testname failed expected $expect got $result\n"
                 printf "test:\t $testname expecting $expect running command $cmd\n"
         else
-                printf "\e[1;32m test $testname passed \e[0m\n"
+                printf "test $testname passed\n"
         fi
-	
 }
 
 compile_tools()
