@@ -150,7 +150,7 @@ run_tests()
 	#echo "simple network set up and ping works, press enter to continue"
 	#read throwaway
 
-	echo "running tests: $tests"
+	echo "running tests in simple network: $tests"
 	for test in $tests
 	do
 		$test $remotejail $testif $localaddr $SRCPORT $routerlocaladdr $DSTPORT
@@ -176,7 +176,7 @@ run_tests()
 	#echo "routed network set up and ping works, press enter to continue"
 	#read throwaway
 
-	echo "running tests: $tests"
+	echo "running tests in routed network: $tests"
 	for test in $tests
 	do
 		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
