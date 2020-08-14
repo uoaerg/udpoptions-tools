@@ -117,7 +117,8 @@ if __name__ == "__main__":
     time.sleep(args.WAITTIME)
     udp_usrreq.stop_run_loop(sniffer)
 
-    print("recived {} packets in {} seconds listening".format(len(packets), args.WAITTIME))
+    if args.VERBOSE:
+        print("recived {} packets in {} seconds listening".format(len(packets), args.WAITTIME))
 
     if not args.EXPECT:
         sys.exit(0)
