@@ -106,7 +106,6 @@ enable_udp_options()
 disable_udp_options()
 {
 	jexec $1 sysctl net.inet.udp.process_udp_options=0 > /dev/null
-	git
 }
 
 # drop locally generated icmp unreach so scapy processes don't reply with it
