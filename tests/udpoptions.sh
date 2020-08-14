@@ -2,6 +2,9 @@
 
 . vnet.subr
 
+VERBOSE=$1
+sendextraflags=$VERBOSE
+
 # default variables used in tests
 SRCPORT=2500
 DSTPORT=7		# udp echo
@@ -165,7 +168,7 @@ run_tests()
 
 test_minimum_udpoptions()
 {	
-	sendcmdoptions=""
+	sendcmdoptions=$sendextraflags
 	udpoptions="02 fd 00"
 	#        ----- --
 	#         ocs  eol
