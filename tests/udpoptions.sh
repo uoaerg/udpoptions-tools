@@ -51,7 +51,6 @@ setup_simple()
 #
 setup_routed() 
 {
-	echo "setting routed test network"
 	outer=$(vnet_mkepair)
 	inner=$(vnet_mkepair)
 
