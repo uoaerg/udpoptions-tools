@@ -64,7 +64,7 @@ setup_routed()
 
 	vnet_mkjail tolbooth ${outer}b ${inner}b
 
-	jexec tolbooth sysctl net.inet.ip.forwarding=1
+	jexec tolbooth sysctl net.inet.ip.forwarding=1 > /dev/null
 
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
 	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
