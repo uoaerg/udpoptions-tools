@@ -88,6 +88,8 @@ setup_routed()
 cleanup()
 {
 	#ipfw -qy flush
+	# sleep before trying to tidy up to see if this alleviates the panics
+	sleep 5
 	vnet_cleanup
 }
 
