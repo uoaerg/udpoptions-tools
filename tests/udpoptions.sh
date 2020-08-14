@@ -31,6 +31,8 @@ setup_simple()
 	disable_udp_options zeist
 	#drop_local_icmp_unreach 192.0.2.2
 
+	# returns the jail to run test servers in and the interface scapy needs
+	# to capture on for tests
 	echo zeist ${outer}a
 }
 
@@ -78,13 +80,14 @@ setup_routed()
 	jexec bassrock arp -s 192.51.100.1 $ethaddrinnerb
 	jexec bassrock route add -net 192.0.2.0/24 192.51.100.1
 
-
 	disable_udp_options tolbooth
 	disable_udp_options bassrock
 
 	#drop_local_icmp_unreach 192.51.100.2
 
-	echo ERRORINTERFACENAMESHOULDBERETURNEDHERE
+	# returns the jail to run test servers in and the interface scapy needs
+	# to capture on for tests
+	echo bassrock ${outer}a
 }
 
 cleanup()
@@ -103,6 +106,7 @@ enable_udp_options()
 disable_udp_options()
 {
 	jexec $1 sysctl net.inet.udp.process_udp_options=0 > /dev/null
+	git
 }
 
 # drop locally generated icmp unreach so scapy processes don't reply with it
@@ -134,12 +138,16 @@ run_tests()
 	routerremoteaddr="192.51.100.1"
 	remoteaddr="192.51.100.2"
 
+	#
+	#
+	# Simple Network Tests
+	#
+	#
 	set `setup_simple`
 	remotejail=$1
 	testif=$2
 
 	echo "Remote jail: $remotejail test interface: $testif"
-
 	echo "Testing interfaces work with ping"
 	pingtest $localaddr
 	pingtest $routerlocaladdr
@@ -156,13 +164,34 @@ run_tests()
 	echo "tidying up simple test network"
 	cleanup
 
-#	setup_routed
-#	pingtest $localaddr
-#	pingtest $routerlocaladdr
-#	pingtest $routerremoteaddr
-#	pingtest $remoteaddr
-#	echo "tidying up routed test network"
-#	cleanup
+	#
+	#
+	# Router Network Tests
+	#
+	#
+	set `setup_routed`
+	remotejail=$1
+	testif=$2
+
+	echo "Remote jail: $remotejail test interface: $testif"
+	echo "Testing interfaces work with ping"
+	pingtest $localaddr
+	pingtest $routerlocaladdr
+	pingtest $routerremoteaddr
+	pingtest $remoteaddr
+	pingtest $
+
+	echo "routed network set up and ping works, press enter to continue"
+	read throwaway
+
+	echo "running tests: $tests"
+	for test in $tests
+	do
+		$test $remotejail $testif $localaddr $SRCPORT $remoteaddr $DSTPORT
+	done
+
+	echo "tidying up routed test network"
+	cleanup
 }
 
 test_minimum_udpoptions()
