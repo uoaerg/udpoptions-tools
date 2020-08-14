@@ -129,17 +129,43 @@ if __name__ == "__main__":
             else: 
                 sys.exit(1)
 
-        # I suspect a lot more parsing is required to do this correctly. I really
-        # need progress so I am going to be hacky until I have something that works
-        # then try and make it gooder.
+        # if we are not expecting silence then 0 packets received is always an
+        # error
+        if len(packets) == 0:
+            sys.exit(1)
 
-        if expectation[0] == "nooptions":
+        # only expect icmp packets, udp or udp + options is an error
+        if expectation[0] == "icmponly":
             for p in packets:
-                if p[2]:
+                if (p[1] or p[2]) and not p[3]:
+                    if args.VERBOSE:
+                        print(p)
                     sys.exit(1)
             sys.exit(0)
+
+        # expect that we receive UDP, but none of received packets have UDP
+        # options. This probably doesn't work if we only get 0 len UDP in
+        # response
+        if expectation[0] == "nooptions":
+            udp = False
+            for p in packets:
+                if p[1]:
+                    udp = True
+                if p[2]:
+                    if args.VERBOSE:
+                        print(p)
+                    sys.exit(1)
+
+            if not udp:
+                sys.exit(1)
+            else:
+                sys.exit(0)
+
+        # expect at least one packet with UDP options
         if expectation[0] == "options":
             for p in packets:
                 if p[2]:
+                    if args.VERBOSE:
+                        print(p)
                     sys.exit(0)
             sys.exit(1)
