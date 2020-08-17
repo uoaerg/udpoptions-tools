@@ -79,19 +79,19 @@ def udp_dooptions(buf):
                 # Parse useful options
                 #
                 if opt == UDPOPT_MSS:
-                    mss = struct.unpack("!h", buf[cp+2:cp+UDPOLEN_MSS])[0]
+                    mss = struct.unpack("!H", buf[cp+2:cp+UDPOLEN_MSS])[0]
                     opts['UDPOPT_MSS'] = mss
 
                 if opt == UDPOPT_TIME:     
-                    tsval, tsecr = struct.unpack("!ii", buf[cp+2:cp+UDPOLEN_TIME])
+                    tsval, tsecr = struct.unpack("!II", buf[cp+2:cp+UDPOLEN_TIME])
                     opts['UDPOPT_TIME'] = (tsval, tsecr)
 
                 if opt == UDPOPT_ECHOREQ:
-                    token = struct.unpack("!i", buf[cp+2:cp+UDPOLEN_ECHOREQ])[0]
+                    token = struct.unpack("!I", buf[cp+2:cp+UDPOLEN_ECHOREQ])[0]
                     opts['UDPOPT_ECHOREQ'] = token
 
                 if opt == UDPOPT_ECHORES:
-                    token = struct.unpack("!i", buf[cp+2:cp+UDPOLEN_ECHORES])[0]
+                    token = struct.unpack("!I", buf[cp+2:cp+UDPOLEN_ECHORES])[0]
                     opts['UDPOPT_ECHORES'] = token
 
 def udp_addoptions(opts):
