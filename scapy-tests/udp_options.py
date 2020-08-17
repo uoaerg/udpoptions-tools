@@ -47,6 +47,8 @@ def udp_dooptions(buf):
                 print("OCS failed {} but should be 0".format(hex(ocs)))
 
         opts = {}
+        opts['optionspacelength'] = len(buf)
+        opts['optionsdata'] = [hex(x) for x in buf]
         cnt = len(buf)
         optlen = 0
         cp = 0
