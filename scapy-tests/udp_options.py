@@ -120,7 +120,7 @@ def udp_addoptions(opts):
             optbuf[optlen+1] = UDPOLEN_MSS
 
             mss = opts['UDPOPT_MSS']
-            struct.pack_into("!I", optbuf, optlen+2, mss)
+            struct.pack_into("!H", optbuf, optlen+2, mss)
             optlen = optlen + UDPOLEN_MSS
 
         if 'UDPOPT_ECHOREQ' in opts:
