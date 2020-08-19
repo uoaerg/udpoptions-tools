@@ -17,10 +17,28 @@ packets = []
 
 def callback(pcb, data=None, options=None, error=None):
     global packets
+    global send_count
+    # gather up all the packets we recieve
     packets.append((pcb, data, options, error))
 
     if args.VERBOSE:
         print((pcb, data, options, error))
+
+    # respond to any udp packets
+    if args.MODE == "pingpong":
+        if not data and not options:
+            return
+
+        opts = {}
+        if 'UDPOPT_ECHOREQ' in options:
+            opts['UDPOPT_ECHORES'] = options['UDPOPT_ECHOREQ']
+
+        if args.VERBOSE:
+            print(opts)
+        udp_usrreq.udp_output(b"pingpong mode reply to packet",
+            {"src": BINDADDR, "dst": DESTADDR, "sport": SPORT, "dport": DPORT},
+            options=opts)
+
     return
 
 if __name__ == "__main__":
@@ -41,6 +59,9 @@ if __name__ == "__main__":
 
     parser.add_argument('-i', dest='INTERFACE', action='store', default=None, type=str,
                         help='interface to listen for responses on, defaults to all, but this does not always work')
+
+    parser.add_argument('--mode', '-m', dest='MODE', action='store', type=str,
+                        help='mode to run in, defaults to sending 1 packet and gathering up replies')
 
     parser.add_argument('-p', dest='PAYLOAD', action='store', default="hello udp options\n", type=str,
                         help='UDP payload to send with packet')
