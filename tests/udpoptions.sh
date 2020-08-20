@@ -250,6 +250,30 @@ test_minimum_udpoptions()
 
 }
 
+test_dplpmtud()
+{
+	udpoptions="02 13 05 04 05 DC 00"
+	#           ----- ----------- --
+	#            OCS  MSS   1500  EOL
+	remotejail=$1
+	testif=$2
+	shift
+	shift
+	addrs=$@
+
+	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e dplpmtudsearch -i $testif -m pingpong -w 1 -s $addrs $sendextraflags"
+	test_run "send->dplpmtudfails" 1 "$cmd"
+
+	# test echo server with dplpmtud
+	enable_udp_options $remotejail
+	jexec $remotejail /home/tj/udpoptions-tools/usertools/echoserver.bin > /dev/null &
+	echoserverpid=$!
+	cmd="/home/tj/udpoptions-tools/scapy-tests/sendoptions.py -e dplpmtudsearch -i $testif -m pingpong -w 1 -s $addrs $sendextraflags"
+	test_run "send->dplpmtud" 0 "$cmd"
+	kill $echoserverpid
+	disable_udp_options $remotejail
+}
+
 set_jail_interface_mtu()
 {
 	jexec $1 ifconfig $2 mtu $3
@@ -289,4 +313,4 @@ compile_tools()
 
 kldload if_epair
 compile_tools
-run_tests test_minimum_udpoptions
+run_tests test_minimum_udpoptions test_dplpmtud
