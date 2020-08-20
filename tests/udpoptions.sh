@@ -75,7 +75,7 @@ setup_routed()
 	jexec tolbooth sysctl net.inet.ip.forwarding=1 > /dev/null
 
 	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 mtu 9216 up
-	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 mtu 1500 up
+	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 mtu 9216 up
 	jexec tolbooth arp -s 192.0.2.2 $ethaddroutera
 	jexec tolbooth arp -s 192.51.100.2 $ethaddrinnera
 
