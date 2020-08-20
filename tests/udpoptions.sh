@@ -240,6 +240,11 @@ test_minimum_udpoptions()
 
 }
 
+set_jail_interface_mtu()
+{
+	jexec $1 ifconfig $2 mtu $3
+}
+
 # emulate kyua test for now
 test_run()
 {
