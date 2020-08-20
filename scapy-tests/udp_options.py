@@ -42,13 +42,19 @@ def calculateocs(pkt):
 
 # parse udp options tlv into a dictionary
 def udp_dooptions(buf):
-        ocs = calculateocs(buf)
-        if ocs != 0:
-                print("OCS failed {} but should be 0".format(hex(ocs)))
-
         opts = {}
         opts['optionspacelength'] = len(buf)
         opts['optionsdata'] = [hex(x) for x in buf]
+
+        ocs = calculateocs(buf)
+        if ocs != 0:
+                print("OCS failed {} but should be 0".format(hex(ocs)))
+                opts['ocs_passed'] = False
+                print(" ".join(opts['optionsdata']))
+                exit(1)
+        else:
+                opts['ocs_passed'] = True
+
         cnt = len(buf)
         optlen = 0
         cp = 0
