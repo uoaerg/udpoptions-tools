@@ -212,8 +212,8 @@ run_tests()
 test_minimum_udpoptions()
 {	
 	udpoptions="02 fd 00"
-	#        ----- --
-	#         ocs  eol
+	#           ----- --
+	#            OCS  EOL
 	remotejail=$1
 	testif=$2
 	shift
