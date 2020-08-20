@@ -95,7 +95,7 @@ setup_routed()
 
 	# returns the jail to run test servers in and the interface scapy needs
 	# to capture on for tests
-	echo bassrock ${outer}a
+	echo bassrock ${outer}a tolbooth ${inner}b
 }
 
 cleanup()
