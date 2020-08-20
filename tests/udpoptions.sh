@@ -57,7 +57,7 @@ setup_simple()
 #	    	       192.51.100.1      
 # epair:     outer                        inner
 # jail:                 tolbooth        bassrock
-#
+# mtu:         9216   9216     1500   9216
 setup_routed() 
 {
 	outer=$(vnet_mkepair)
@@ -67,15 +67,15 @@ setup_routed()
 	ethaddrinnera=`ifconfig ${inner}a |  grep ether | awk '{print $2}'`
 	ethaddrinnerb=`ifconfig ${inner}b |  grep ether | awk '{print $2}'`
 
-	ifconfig ${outer}a 192.0.2.2/24 up
+	ifconfig ${outer}a 192.0.2.2/24 mtu 9216 up
 	route -q add -net 192.51.100.0/24 192.0.2.1
 
 	vnet_mkjail tolbooth ${outer}b ${inner}b
 
 	jexec tolbooth sysctl net.inet.ip.forwarding=1 > /dev/null
 
-	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 up
-	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 up
+	jexec tolbooth ifconfig ${outer}b 192.0.2.1/24 mtu 9216 up
+	jexec tolbooth ifconfig ${inner}b 192.51.100.1/24 mtu 1500 up
 	jexec tolbooth arp -s 192.0.2.2 $ethaddroutera
 	jexec tolbooth arp -s 192.51.100.2 $ethaddrinnera
 
@@ -84,7 +84,7 @@ setup_routed()
 
 	vnet_mkjail bassrock ${inner}a
 
-	jexec bassrock ifconfig ${inner}a 192.51.100.2/24 up
+	jexec bassrock ifconfig ${inner}a 192.51.100.2/24 mtu 9216 up
 	jexec bassrock arp -s 192.51.100.1 $ethaddrinnerb
 	jexec bassrock route -q add -net 192.0.2.0/24 192.51.100.1
 
