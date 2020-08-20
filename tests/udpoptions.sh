@@ -140,11 +140,11 @@ pingtest()
 # pingtest_expectptb 192.0.2.1 16000 1	# expect ping to fail
 pingtest_expectptb()
 {
-	# I suspect this test might be very fragile
-	result=`ping -c 1 -t 1 -D -s $2 $1 | grep "frag needed and DF set" | wc -l`
-	if [ $result -eq $3 ]
+	pingout=`ping -c 1 -t 1 -D -s $2 $1`
+	result=`echo $pingout | grep "frag needed and DF set" | wc -l | awk '{$1=$1};1'`
+	if [ $result -ne $3 ]
 	then
-	        echo "ptb pingtest pinging $1 failed"
+		echo "ptb pingtest pinging $1 failed, result $result expected $3"
 		exit
 	fi
 }
@@ -190,12 +190,22 @@ run_tests()
 	set `setup_routed`
 	remotejail=$1
 	testif=$2
+	routerjail=$3
+	restrictedif=$4
 
 	#echo "Remote jail: $remotejail test interface: $testif"
 	pingtest $localaddr
 	pingtest $routerlocaladdr
 	pingtest $routerremoteaddr
 	pingtest $remoteaddr
+
+	pingtest_expectptb $remoteaddr 1400 0
+	pingtest_expectptb $remoteaddr 9100 0
+
+	set_jail_interface_mtu $routerjail $restrictedif 1500
+	pingtest_expectptb $remoteaddr 1400 0
+	pingtest_expectptb $remoteaddr 9100 1
+
 
 	#echo "routed network set up and ping works, press enter to continue"
 	#read throwaway
