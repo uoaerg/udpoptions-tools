@@ -1,5 +1,14 @@
 #!/bin/sh
 
+#
+# How to run
+# either just this file
+# ./udpoptions.sh
+# or with any extra flags to be sent to the sendoptions.py test script
+# I think only -v has been tested
+# ./udpoptions.sh -v
+#
+
 . vnet.subr
 
 sendextraflags=$@
