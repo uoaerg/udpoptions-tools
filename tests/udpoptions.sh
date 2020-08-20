@@ -151,7 +151,7 @@ pingtest_expectptb()
 
 run_tests()
 {
-	tests=$1
+	tests=$@
 
 	localaddr="192.0.2.2"
 	routerlocaladdr="192.0.2.1"
