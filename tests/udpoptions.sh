@@ -134,6 +134,21 @@ pingtest()
 	fi
 }
 
+# address pingsize result
+# i.e.
+# pingtest_expectptb 192.0.2.1 1500 0	# expect ping to succeed
+# pingtest_expectptb 192.0.2.1 16000 1	# expect ping to fail
+pingtest_expectptb()
+{
+	# I suspect this test might be very fragile
+	result=`ping -c 1 -t 1 -D -s $2 $1 | grep "frag needed and DF set" | wc -l`
+	if [ $result -eq $3 ]
+	then
+	        echo "ptb pingtest pinging $1 failed"
+		exit
+	fi
+}
+
 run_tests()
 {
 	tests=$1
