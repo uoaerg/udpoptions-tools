@@ -76,6 +76,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    options = {}
     if args.OPTIONDATA:
         if args.HEXDUMP:
             print('hexdump output is NOT IMPLEMENTED')
