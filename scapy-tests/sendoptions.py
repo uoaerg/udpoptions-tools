@@ -191,3 +191,22 @@ if __name__ == "__main__":
                         print(p)
                     sys.exit(0)
             sys.exit(1)
+
+        # expect at least one packet with UDP options
+        # expect one probe packet (no payload, udp options and udp options length >= 1000)
+        if expectation[0] == "dplpmtudsearch":
+            optionspresent = False
+            probepresent = False
+            for p in packets:
+                if p[2]:
+                    if args.VERBOSE:
+                        print(p)
+                    optionspresent = True
+                if not p[1] and (p[2] and p[2]['optionspacelength'] >= 1000):
+                    if args.VERBOSE:
+                        print(p)
+                    probepresent = True
+            if optionspresent and probepresent:
+                sys.exit(0)
+            else:
+                sys.exit(1)
