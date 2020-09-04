@@ -30,7 +30,7 @@ def callback(pcb, data=None, options=None, error=None):
             return
 
         opts = {}
-        if 'UDPOPT_ECHOREQ' in options:
+        if options and 'UDPOPT_ECHOREQ' in options:
             opts['UDPOPT_ECHORES'] = options['UDPOPT_ECHOREQ']
 
         if args.VERBOSE:
